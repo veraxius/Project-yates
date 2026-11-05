@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ENROLL_HREF, LOGIN_HREF, nav } from "../lib/site";
+import { ENROLL_HREF, nav } from "../lib/site";
 
 export function Header() {
   const pathname = usePathname();
@@ -67,7 +67,7 @@ export function Header() {
       <div className="nav-fade container-x flex h-[4.5rem] items-center justify-between gap-6">
         <Link href="/" aria-label="YB University, home" onClick={() => setOpen(false)}>
           <Image
-            src="/YB University LOGO HORIZONTAL-white.png"
+            src="/YB University LOGO HORIZONTAL MONOCHROME-03.png"
             alt="YB University"
             width={160}
             height={38}
@@ -97,12 +97,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3 sm:gap-5">
-          <Link
-            href={LOGIN_HREF}
-            className="hidden whitespace-nowrap text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-white/70 transition-colors hover:text-white 2xl:block"
-          >
-            Log In
-          </Link>
           <Link
             href={ctaHref}
             className="whitespace-nowrap bg-white px-4 py-3 text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-navy-900 transition-[color,background-color,transform] duration-300 hover:bg-ivory motion-safe:hover:-translate-y-0.5 sm:px-6 sm:text-[0.68rem]"
@@ -142,13 +136,6 @@ export function Header() {
                 <span className="hidden text-right text-xs text-white/50 sm:block">{item.note}</span>
               </Link>
             ))}
-            <Link
-              href={LOGIN_HREF}
-              onClick={() => setOpen(false)}
-              className="py-5 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-white/70"
-            >
-              Log In
-            </Link>
             <Link
               href={ctaHref}
               onClick={() => setOpen(false)}

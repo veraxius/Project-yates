@@ -8,7 +8,7 @@ export function Footer() {
       <div className="container-x grid gap-14 py-20 lg:grid-cols-[1.2fr_2fr]">
         <div>
           <Image
-            src="/YB University LOGO HORIZONTAL-white.png"
+            src="/YB University LOGO HORIZONTAL MONOCHROME-03.png"
             alt="YB University"
             width={180}
             height={42}
