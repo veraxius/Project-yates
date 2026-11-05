@@ -1,26 +1,215 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-navy-950: #031f3c;
+  --color-navy-900: #031f3c;
+  --color-navy-800: #0c2d57;
+  --color-navy-700: #123f75;
+  --color-ivory: #f6f3ec;
+  --color-sand: #b8a27a;
+  --color-brass: #8a7448;
+  --color-sky: #5bb6de;
+  --color-mist: #e8edf3;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cormorant), Georgia, serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: var(--color-navy-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-navy-900);
+  color: #ffffff;
+}
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .container-x {
+      padding-inline: 3rem;
+    }
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--color-brass);
+  }
+
+  .h-display {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+  }
+
+  .rule {
+    height: 1px;
+    width: 3.5rem;
+    background: var(--color-sand);
+  }
+
+  .lead {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+}
+
+/*
+  Hero entrance: "mask reveal". The background emerges from the brand navy,
+  a gold hairline draws itself, the headline rises word by word from behind a
+  mask, and the supporting copy fades in. Only opacity and transform animate.
+  Tunable values:
+*/
+:root {
+  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --hero-settle-scale: 1.06;
+  --hero-settle-duration: 2s;
+
+  --hero-line-start: 300ms;
+  --hero-line-duration: 1s;
+
+  --hero-word-start: 500ms;
+  --hero-word-stagger: 70ms;
+  --hero-word-duration: 1.1s;
+
+  --hero-fade-duration: 0.9s;
+  --hero-rise: 10px;
+
+  --nav-fade-duration: 0.8s;
+}
+
+/* Background: fades up out of the navy while settling from a slight zoom. */
+@keyframes hero-settle {
+  from {
+    opacity: 0;
+    transform: scale(var(--hero-settle-scale));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-settle {
+  animation: hero-settle var(--hero-settle-duration) var(--ease-lux) backwards;
+}
+
+/* Gold hairline that draws left to right. */
+@keyframes line-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.line-draw {
+  transform-origin: left;
+  animation: line-draw var(--hero-line-duration) var(--ease-lux) backwards;
+  animation-delay: var(--hero-line-start);
+}
+
+/* Headline: each word slides up from behind its own mask. Index set via --w. */
+.mask-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-block: 0.08em;
+  margin-block: -0.08em;
+}
+
+@keyframes word-up {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.mask-word > span {
+  display: inline-block;
+  animation: word-up var(--hero-word-duration) var(--ease-lux) backwards;
+  animation-delay: calc(var(--hero-word-start) + var(--hero-word-stagger) * var(--w, 0));
+}
+
+/* Supporting copy and buttons: soft fade with a tiny rise. Delay set via --d. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--hero-rise));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise var(--hero-fade-duration) var(--ease-lux) backwards;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Navbar: plain fade, no movement. */
+@keyframes nav-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.nav-fade {
+  animation: nav-fade var(--nav-fade-duration) ease-out backwards;
+}
+
+.reveal {
+  transition:
+    opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal[data-state="hidden"] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .hero-settle,
+  .line-draw,
+  .mask-word > span,
+  .rise,
+  .nav-fade {
+    animation: none;
+  }
+  .reveal,
+  .reveal[data-state="hidden"] {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
 }
