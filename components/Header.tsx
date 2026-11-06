@@ -11,6 +11,20 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Esc closes the mobile menu and returns focus to its button.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   // Hide on scroll down, show on scroll up. Always visible near the top.
   useEffect(() => {
@@ -65,7 +79,12 @@ export function Header() {
       }`}
     >
       <div className="nav-fade container-x flex h-[4.5rem] items-center justify-between gap-6">
-        <Link href="/" aria-label="YB University, home" onClick={() => setOpen(false)}>
+        <Link
+          href="/"
+          aria-label="YB University, home"
+          onClick={() => setOpen(false)}
+          className="flex min-h-11 shrink-0 items-center"
+        >
           <Image
             src="/YB University LOGO HORIZONTAL MONOCHROME-03.png"
             alt="YB University"
@@ -99,7 +118,7 @@ export function Header() {
         <div className="flex items-center gap-3 sm:gap-5">
           <Link
             href={ctaHref}
-            className="whitespace-nowrap bg-white px-4 py-3 text-[0.6rem] font-semibold uppercase tracking-[0.16em] text-navy-900 transition-[color,background-color,transform] duration-300 hover:bg-ivory motion-safe:hover:-translate-y-0.5 sm:px-6 sm:text-[0.68rem]"
+            className="hidden whitespace-nowrap bg-white px-4 py-3.5 text-[0.68rem] lg:py-3 font-semibold uppercase tracking-[0.16em] text-navy-900 transition-[color,background-color,transform] duration-300 hover:bg-ivory motion-safe:hover:-translate-y-0.5 min-[480px]:inline-block sm:px-6"
           >
             {ctaLabel}
           </Link>
@@ -107,8 +126,10 @@ export function Header() {
             type="button"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
+            aria-controls="mobile-menu"
+            ref={menuButtonRef}
             onClick={() => setOpen((v) => !v)}
-            className="flex h-10 w-10 items-center justify-center xl:hidden"
+            className="flex h-11 w-11 items-center justify-center xl:hidden"
           >
             <span className="relative block h-3 w-6">
               <span
@@ -123,7 +144,10 @@ export function Header() {
       </div>
 
       {open && (
-        <div className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto border-t border-white/10 bg-navy-950 text-white xl:hidden">
+        <div
+          id="mobile-menu"
+          className="fixed inset-x-0 bottom-0 top-[4.5rem] overflow-y-auto overscroll-contain border-t border-white/10 bg-navy-950 pb-[env(safe-area-inset-bottom)] text-white xl:hidden"
+        >
           <nav aria-label="Mobile" className="container-x flex flex-col py-8">
             {nav.map((item) => (
               <Link
