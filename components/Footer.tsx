@@ -15,7 +15,7 @@ export function Footer() {
             className="h-auto w-44"
           />
           <p className="h-display mt-8 max-w-xs text-2xl text-white/80">
-            The next generation of yachting starts here.
+            Discover a World. Make It Yours.
           </p>
         </div>
 

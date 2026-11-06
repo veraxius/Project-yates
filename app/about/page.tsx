@@ -83,7 +83,7 @@ export default function AboutPage() {
             </p>
             <div className="rule mx-auto mt-10" />
             <p className="mt-10 text-[0.78rem] font-semibold uppercase tracking-[0.24em] text-white/80">
-              YB UNIVERSITY. THE NEXT GENERATION OF YACHTING STARTS HERE.
+              YB UNIVERSITY. DISCOVER A WORLD. MAKE IT YOURS.
             </p>
           </Reveal>
         </div>

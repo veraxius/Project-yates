@@ -17,7 +17,7 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   title: {
-    default: "YB University | The next generation of yachting starts here.",
+    default: "YB University | Discover a World. Make It Yours.",
     template: "%s | YB University",
   },
   description:

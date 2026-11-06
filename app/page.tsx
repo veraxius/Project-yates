@@ -87,7 +87,7 @@ export default function Home() {
             <span aria-hidden className="line-draw block h-px w-14 bg-sand" />
           </div>
           <h1 className="h-display mt-6 max-w-4xl text-[clamp(2.6rem,5.4vw,4.9rem)]">
-            <RevealWords text="THE NEXT GENERATION OF YACHTING STARTS HERE." />
+            <RevealWords text="DISCOVER A WORLD. MAKE IT YOURS." />
           </h1>
           <div className="mt-10 max-w-2xl">
             <p
