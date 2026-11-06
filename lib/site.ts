@@ -9,7 +9,7 @@ export const nav = [
 
 // Placeholders until the LearnWorlds login and the Stripe checkout are wired up.
 export const LOGIN_HREF = "#";
-export const ENROLL_HREF = "#enroll";
+export const ENROLL_HREF = "/learn/enroll";
 
 export const footerColumns = [
   {

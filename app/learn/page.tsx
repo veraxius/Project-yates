@@ -3,6 +3,7 @@ import { Cta } from "../../components/Cta";
 import { PageHero } from "../../components/PageHero";
 import { Photo } from "../../components/Photo";
 import { Reveal } from "../../components/Reveal";
+import { curriculum, learn } from "../../lib/course";
 import { ENROLL_HREF } from "../../lib/site";
 
 export const metadata: Metadata = {
@@ -10,51 +11,6 @@ export const metadata: Metadata = {
   description:
     "The YB Broker Certification Experience: Yacht Brokerage Professional Foundations. 16 modules, practical assignments, competency assessments and one final challenge.",
 };
-
-const learn = [
-  "Understand the yacht brokerage industry.",
-  "Identify vessel types, systems, and specifications.",
-  "Evaluate market positioning and yacht pricing.",
-  "Develop buyer and seller relationships.",
-  "Create professional yacht listings and marketing strategies.",
-  "Understand negotiation and transaction processes.",
-  "Build a professional approach to brokerage.",
-];
-
-const curriculum = [
-  {
-    phase: "Know the Industry",
-    modules: "1–4",
-    focus: "Yachts, systems, safety, brokerage",
-    src: "/Buzo inspeccionando el casco bajo el agua.png",
-    alt: "Diver inspecting a yacht hull underwater",
-    pos: "50% 40%",
-  },
-  {
-    phase: "Find the Opportunity",
-    modules: "5–8",
-    focus: "Prospecting, clients, valuation, listings",
-    src: "/Corredor mostrando un yate a una pareja.png",
-    alt: "Broker presenting a yacht to a couple at the marina",
-    pos: "50% 45%",
-  },
-  {
-    phase: "Build the Business",
-    modules: "9–12",
-    focus: "Marketing, showings, negotiation, transactions",
-    src: "/Firma de contrato frente a un yate.png",
-    alt: "Hand signing a contract with a yacht in the background",
-    pos: "70% 60%",
-  },
-  {
-    phase: "Become the Professional",
-    modules: "13–16",
-    focus: "Compliance, networks, client experience, business development",
-    src: "/Reunion de clientes con folleto de yates.png",
-    alt: "Brokers and a client reviewing a yacht brochure together",
-    pos: "60% 50%",
-  },
-];
 
 export default function LearnPage() {
   return (
