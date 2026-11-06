@@ -83,7 +83,7 @@ export default function NetworkPage() {
               <Reveal key={r.name} delay={(i % 3) * 100} className="bg-ivory">
                 <div className="h-full p-8 sm:p-10">
                   <span className="h-display text-3xl text-sand">{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="h-display mt-6 text-3xl sm:text-4xl">{r.name}</h3>
+                  <h3 className="h-display mt-6 text-3xl sm:text-4xl lg:text-3xl xl:text-4xl">{r.name}</h3>
                   <p className="mt-4 leading-relaxed text-navy-900/70">{r.body}</p>
                 </div>
               </Reveal>

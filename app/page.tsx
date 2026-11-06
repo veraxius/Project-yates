@@ -152,12 +152,12 @@ export default function Home() {
               Four components. One connected experience.
             </h2>
           </Reveal>
-          <div className="mt-14 grid gap-5 md:grid-cols-2">
+          <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2">
             {components.map((c, i) => (
-              <Reveal key={c.name} delay={(i % 2) * 120}>
+              <Reveal key={c.name} delay={(i % 2) * 120} className="min-w-0">
                 <Link
                   href={c.href}
-                  className="group relative isolate flex min-h-[34rem] flex-col justify-end overflow-hidden p-8 text-white sm:p-10"
+                  className="group relative isolate flex min-h-[34rem] flex-col justify-end overflow-hidden p-6 text-white min-[400px]:p-8 sm:p-10"
                 >
                   <Photo
                     variant={c.variant}
@@ -173,7 +173,7 @@ export default function Home() {
                   <p className="eyebrow !text-sand">
                     {c.n} / {c.name}
                   </p>
-                  <h3 className="h-display mt-4 text-4xl sm:text-5xl">{c.title}</h3>
+                  <h3 className="h-display mt-4 text-[clamp(1.75rem,9.2vw,2.25rem)] sm:text-5xl md:text-4xl lg:text-5xl">{c.title}</h3>
                   <p className="mt-5 max-w-md leading-relaxed text-white/80">{c.body}</p>
                   <p className="mt-6 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-white/60">
                     {c.tags}
@@ -201,7 +201,7 @@ export default function Home() {
         <div className="container-x py-28">
           <Reveal className="max-w-3xl">
             <p className="eyebrow !text-sand">THE YB BROKER CERTIFICATION EXPERIENCE</p>
-            <h2 className="h-display mt-6 text-5xl sm:text-6xl lg:text-7xl">
+            <h2 className="h-display mt-6 text-[clamp(2.25rem,11vw,3rem)] sm:text-6xl lg:text-7xl">
               YOUR FIRST STEP INTO YACHT BROKERAGE.
             </h2>
             <h3 className="h-display mt-8 text-2xl text-sky sm:text-3xl">
@@ -371,7 +371,7 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_80%_at_50%_50%,rgba(3,31,60,0.88),rgba(3,31,60,0.66)_55%,rgba(3,31,60,0.4)_100%)]" />
         <div className="container-x py-28">
           <Reveal className="mx-auto max-w-4xl">
-            <h2 className="h-display text-5xl sm:text-6xl lg:text-7xl">
+            <h2 className="h-display text-[clamp(2.25rem,11vw,3rem)] sm:text-6xl lg:text-7xl">
               THE INDUSTRY IS OPEN TO NEW PERSPECTIVES.
             </h2>
             <p className="h-display mt-6 text-3xl text-sky sm:text-4xl">Are you ready to explore it?</p>
