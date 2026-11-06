@@ -30,6 +30,9 @@ export default function AboutPage() {
         name="ABOUT YB UNIVERSITY"
         title="A NEW PERSPECTIVE ON AN ESTABLISHED INDUSTRY."
         variant={2}
+        src="/Joven creando contenido en la proa.png"
+        alt="Young creator filming content with a phone on a gimbal at the bow of a yacht"
+        objectPosition="50% 40%"
       />
 
       <section className="py-24 lg:py-32">

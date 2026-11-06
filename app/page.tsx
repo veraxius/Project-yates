@@ -16,9 +16,9 @@ const components = [
     tags: "Professional learning · Assessments · Credential",
     href: "/learn",
     variant: 1 as const,
-    src: "/Yate de lujo y contratos al atardecer.png",
-    alt: "Luxury yacht at sunset with contracts and an inspection checklist on the deck table",
-    pos: "40% 50%",
+    src: "/Corredor en el muelle frente a yate.png",
+    alt: "Young broker in a navy suit standing at the marina in front of a luxury yacht",
+    pos: "25% 45%",
   },
   {
     n: "02",
@@ -52,9 +52,9 @@ const components = [
     tags: "Projects · Talent · Professional pathways",
     href: "/opportunities",
     variant: 5 as const,
-    src: "/Amanecer sereno a bordo del velero.png",
-    alt: "View from a sailboat bow at sunrise with a camera and a mug of coffee",
-    pos: "50% 30%",
+    src: "/Apreton de manos en el puerto deportivo.png",
+    alt: "Two professionals shaking hands on the marina dock in front of luxury yachts",
+    pos: "38% 50%",
   },
 ];
 
@@ -71,8 +71,8 @@ export default function Home() {
       {/* 01. Hero */}
       <section className="relative isolate flex min-h-[calc(100svh-4.5rem)] items-end text-white">
         <Photo
-          src="/Yate de lujo sobre aguas cristalinas.png"
-          alt="Luxury yacht on crystal-clear water"
+          src="/Golden Sunset Yacht Gathering.png"
+          alt="Guests gathered on a luxury yacht at golden sunset"
           quality={90}
           priority
           objectPosition="60% 50%"
@@ -164,7 +164,7 @@ export default function Home() {
                     src={c.src}
                     alt={c.alt}
                     quality={90}
-                    sizes="(min-width: 768px) 50vw, 100vw"
+                    sizes="52rem"
                     objectPosition={c.pos}
                     className="absolute inset-0 -z-10 transition-transform duration-[1200ms] ease-out group-hover:scale-105"
                   />
@@ -191,10 +191,10 @@ export default function Home() {
       {/* 04. Flagship program */}
       <section className="relative isolate flex min-h-[85svh] items-center text-white">
         <Photo
-          src="/Yate de lujo surcando el océano.png"
-          alt="Aerial view of a luxury motor yacht cruising across deep blue water"
+          src="/Reunion al atardecer en la cubierta del yate.png"
+          alt="Professionals networking on a yacht deck at sunset with the city skyline behind"
           quality={90}
-          objectPosition="47% 50%"
+          objectPosition="50% 65%"
           className="absolute inset-0 -z-10"
         />
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(3,31,60,0.92)_0%,rgba(3,31,60,0.72)_40%,rgba(3,31,60,0.25)_70%,rgba(3,31,60,0)_100%)]" />
@@ -271,10 +271,11 @@ export default function Home() {
               className="col-span-2 h-full"
             />
             <Photo
-              src="/Proa de yate bajo cielo azul.png"
-              alt="Bow of a yacht with a teak deck and steel railings under a clear blue sky"
+              src="/Corredor trabajando frente al puerto deportivo.png"
+              alt="Broker working on a laptop at a desk with a marina full of yachts behind"
               quality={90}
-              sizes="(min-width: 1024px) 14rem, 40vw"
+              objectPosition="85% 50%"
+              sizes="40rem"
               className="col-span-2 h-full"
             />
           </Reveal>
@@ -361,9 +362,10 @@ export default function Home() {
       {/* 09. Final CTA */}
       <section className="relative isolate flex min-h-[80svh] items-center justify-center text-center text-white">
         <Photo
-          src="/Yate de lujo navegando entre islas.png"
-          alt="Luxury yacht cruising between green islands on deep blue water"
+          src="/Entrevista en cubierta de yate.png"
+          alt="Friends laughing together on a yacht deck while a video crew films them"
           quality={90}
+          objectPosition="50% 55%"
           className="absolute inset-0 -z-10"
         />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_80%_at_50%_50%,rgba(3,31,60,0.88),rgba(3,31,60,0.66)_55%,rgba(3,31,60,0.4)_100%)]" />

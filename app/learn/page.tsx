@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cta } from "../../components/Cta";
 import { PageHero } from "../../components/PageHero";
+import { Photo } from "../../components/Photo";
 import { Reveal } from "../../components/Reveal";
 import { ENROLL_HREF } from "../../lib/site";
 
@@ -21,13 +22,37 @@ const learn = [
 ];
 
 const curriculum = [
-  { phase: "Know the Industry", modules: "1–4", focus: "Yachts, systems, safety, brokerage" },
-  { phase: "Find the Opportunity", modules: "5–8", focus: "Prospecting, clients, valuation, listings" },
-  { phase: "Build the Business", modules: "9–12", focus: "Marketing, showings, negotiation, transactions" },
+  {
+    phase: "Know the Industry",
+    modules: "1–4",
+    focus: "Yachts, systems, safety, brokerage",
+    src: "/Buzo inspeccionando el casco bajo el agua.png",
+    alt: "Diver inspecting a yacht hull underwater",
+    pos: "50% 40%",
+  },
+  {
+    phase: "Find the Opportunity",
+    modules: "5–8",
+    focus: "Prospecting, clients, valuation, listings",
+    src: "/Corredor mostrando un yate a una pareja.png",
+    alt: "Broker presenting a yacht to a couple at the marina",
+    pos: "50% 45%",
+  },
+  {
+    phase: "Build the Business",
+    modules: "9–12",
+    focus: "Marketing, showings, negotiation, transactions",
+    src: "/Firma de contrato frente a un yate.png",
+    alt: "Hand signing a contract with a yacht in the background",
+    pos: "70% 60%",
+  },
   {
     phase: "Become the Professional",
     modules: "13–16",
     focus: "Compliance, networks, client experience, business development",
+    src: "/Reunion de clientes con folleto de yates.png",
+    alt: "Brokers and a client reviewing a yacht brochure together",
+    pos: "60% 50%",
   },
 ];
 
@@ -39,6 +64,9 @@ export default function LearnPage() {
         name="YB LEARN"
         title="LEARN THE BUSINESS. BUILD THE SKILLS."
         variant={1}
+        src="/Puente de mando de un superyate.png"
+        alt="Helm station of a luxury yacht with navigation and engine monitoring screens"
+        objectPosition="60% 50%"
       >
         <p className="text-xl text-white/90">The YB Broker Certification Experience</p>
         <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -123,7 +151,7 @@ export default function LearnPage() {
             <h2 className="h-display mt-5 text-4xl sm:text-5xl lg:text-6xl">Four phases. Sixteen modules.</h2>
           </Reveal>
           <Reveal className="mt-12">
-            <div className="hidden grid-cols-[1.2fr_0.5fr_2fr] gap-6 border-b border-navy-900/30 pb-4 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-navy-900/60 md:grid">
+            <div className="hidden grid-cols-[1.2fr_0.5fr_2fr_11rem] gap-6 border-b border-navy-900/30 pb-4 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-navy-900/60 md:grid">
               <span>Phase</span>
               <span>Modules</span>
               <span>Focus</span>
@@ -131,7 +159,7 @@ export default function LearnPage() {
             {curriculum.map((row, i) => (
               <div
                 key={row.phase}
-                className="grid gap-2 border-b border-navy-900/15 py-8 md:grid-cols-[1.2fr_0.5fr_2fr] md:items-baseline md:gap-6"
+                className="grid gap-2 border-b border-navy-900/15 py-8 md:grid-cols-[1.2fr_0.5fr_2fr_11rem] md:items-center md:gap-6"
               >
                 <h3 className="h-display text-3xl">
                   <span className="mr-3 text-sand">{String(i + 1).padStart(2, "0")}</span>
@@ -142,6 +170,13 @@ export default function LearnPage() {
                   {row.modules}
                 </p>
                 <p className="text-lg text-navy-900/75">{row.focus}</p>
+                <Photo
+                  src={row.src}
+                  alt={row.alt}
+                  objectPosition={row.pos}
+                  sizes="(min-width: 768px) 11rem, 100vw"
+                  className="mt-4 aspect-[16/10] w-full md:mt-0"
+                />
               </div>
             ))}
           </Reveal>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cta } from "../../components/Cta";
 import { PageHero } from "../../components/PageHero";
+import { Photo } from "../../components/Photo";
 import { Reveal } from "../../components/Reveal";
 
 export const metadata: Metadata = {
@@ -37,6 +38,9 @@ export default function NetworkPage() {
         name="YB NETWORK"
         title="YOUR PEOPLE. YOUR INDUSTRY. YOUR NEXT CONNECTION."
         variant={4}
+        src="/Capitan reunido con la tripulacion.png"
+        alt="Yacht captain meeting with crew and guests around a table on the bridge"
+        objectPosition="50% 45%"
       />
 
       <section className="py-24 lg:py-32">
@@ -54,6 +58,17 @@ export default function NetworkPage() {
             <p className="lead mt-5 text-navy-900/75">
               A place to exchange knowledge, discuss the business, share ideas, and build meaningful professional connections.
             </p>
+          </Reveal>
+        </div>
+        <div className="container-x mt-16">
+          <Reveal>
+            <Photo
+              src="/Cierre de venta en cubierta de yate.png"
+              alt="Broker shaking hands with a smiling couple on a yacht deck"
+              objectPosition="50% 55%"
+              sizes="(min-width: 1280px) 1200px, 100vw"
+              className="aspect-[16/8] w-full"
+            />
           </Reveal>
         </div>
       </section>

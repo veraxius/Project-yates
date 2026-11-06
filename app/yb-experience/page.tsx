@@ -41,6 +41,9 @@ export default function ExperiencePage() {
         name="YB EXPERIENCE"
         title="DON'T JUST STUDY YACHTING. GET CLOSER TO IT."
         variant={3}
+        src="/Evento de networking en terraza del puerto.png"
+        alt="Industry professionals networking on a marina terrace in front of luxury yachts"
+        objectPosition="50% 55%"
       />
 
       <section className="py-24 lg:py-32">
@@ -55,7 +58,13 @@ export default function ExperiencePage() {
             </p>
           </Reveal>
           <Reveal delay={120}>
-            <Photo variant={4} className="aspect-[5/4] w-full" />
+            <Photo
+              src="/Corredor mostrando el puente de mando.png"
+              alt="Yacht broker showing a couple the helm station during an onboard visit"
+              objectPosition="45% 50%"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="aspect-[5/4] w-full"
+            />
           </Reveal>
         </div>
       </section>
@@ -73,6 +82,33 @@ export default function ExperiencePage() {
                   <h3 className="h-display text-3xl sm:text-4xl">{e.name}</h3>
                   <p className="text-lg leading-relaxed text-navy-900/75">{e.body}</p>
                 </div>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-16 grid gap-6 sm:grid-cols-2">
+            {[
+              {
+                name: "MEET THE INDUSTRY",
+                src: "/Inspector revisando el casco en astillero.png",
+                alt: "Marine surveyor inspecting a yacht hull in a boatyard",
+                pos: "60% 50%",
+              },
+              {
+                name: "CONTENT CREATION MISSIONS",
+                src: "/Equipo de video filmando en cubierta.png",
+                alt: "Video crew filming on a yacht deck with a professional camera",
+                pos: "50% 50%",
+              },
+            ].map((p) => (
+              <Reveal key={p.name}>
+                <Photo
+                  src={p.src}
+                  alt={p.alt}
+                  objectPosition={p.pos}
+                  sizes="(min-width: 640px) 50vw, 100vw"
+                  className="aspect-[16/10] w-full"
+                />
+                <p className="eyebrow mt-4">{p.name}</p>
               </Reveal>
             ))}
           </div>

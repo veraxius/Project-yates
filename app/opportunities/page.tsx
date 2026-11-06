@@ -42,6 +42,9 @@ export default function OpportunitiesPage() {
         name="YB OPPORTUNITIES"
         title="TURN WHAT YOU KNOW INTO WHAT YOU CAN DO."
         variant={5}
+        src="/Corredor trabajando frente a un yate.png"
+        alt="Professional working on a laptop at a desk with a yacht moored outside the window"
+        objectPosition="50% 45%"
       />
 
       <section className="py-24 lg:py-32">
