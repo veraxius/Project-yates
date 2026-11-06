@@ -52,12 +52,20 @@ body {
     font-weight: 600;
     color: var(--color-brass);
   }
+  /* Keep small labels at a readable 12px on touch-size screens. */
+  @media (max-width: 1023px) {
+    .eyebrow {
+      font-size: 0.75rem;
+    }
+  }
 
   .h-display {
     font-family: var(--font-display);
     font-weight: 500;
     line-height: 1.02;
     letter-spacing: -0.01em;
+    /* Safety net so an unusually long word wraps instead of overflowing. */
+    overflow-wrap: break-word;
   }
 
   .rule {

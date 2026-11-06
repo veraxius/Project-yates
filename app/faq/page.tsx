@@ -64,7 +64,7 @@ export default function FaqPage() {
           <div className="divide-y divide-navy-900/15 border-y border-navy-900/15">
             {faqs.map((f) => (
               <details key={f.q} className="group py-7">
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-6 [&::-webkit-details-marker]:hidden">
+                <summary className="-my-2 flex min-h-11 cursor-pointer list-none items-start justify-between gap-6 py-2 [&::-webkit-details-marker]:hidden">
                   <h2 className="h-display text-2xl leading-snug sm:text-3xl">{f.q}</h2>
                   <span
                     aria-hidden
