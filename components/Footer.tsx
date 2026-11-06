@@ -41,9 +41,17 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-x flex flex-col gap-2 py-6 text-xs text-white/50 sm:flex-row sm:justify-between">
+        <div className="container-x flex flex-col gap-2 py-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
           <p>© YB University. All rights reserved.</p>
-          <p>Connected to Palm Beach Yachts.</p>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-1">
+            <Link
+              href="/faq"
+              className="inline-flex min-h-11 items-center text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:text-sand"
+            >
+              FAQ
+            </Link>
+            <p>Connected to Palm Beach Yachts.</p>
+          </div>
         </div>
       </div>
     </footer>

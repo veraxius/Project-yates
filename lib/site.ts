@@ -37,6 +37,7 @@ export const footerColumns = [
       { label: "Log In", href: LOGIN_HREF },
       { label: "My Learning", href: "#" },
       { label: "Student Network", href: "#" },
+      { label: "Resources", href: "/resources" },
     ],
   },
   {
