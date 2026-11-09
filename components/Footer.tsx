@@ -8,7 +8,7 @@ export function Footer() {
       <div className="container-x grid gap-14 py-20 lg:grid-cols-[1.2fr_2fr]">
         <div>
           <Image
-            src="/YB University LOGO HORIZONTAL MONOCHROME-03.png"
+            src="/yb-university-logo-horizontal-white.png"
             alt="YB University"
             width={180}
             height={42}
@@ -26,12 +26,24 @@ export function Footer() {
               <ul className="mt-3 lg:mt-5 lg:space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="inline-block py-3 text-sm text-white/70 transition-colors hover:text-white lg:inline lg:py-0"
-                    >
-                      {link.label}
-                    </Link>
+                    {link.href.startsWith("http") ? (
+                      // External address (the LearnWorlds school): a plain link that opens in a new tab.
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block py-3 text-sm text-white/70 transition-colors hover:text-white lg:inline lg:py-0"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="inline-block py-3 text-sm text-white/70 transition-colors hover:text-white lg:inline lg:py-0"
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

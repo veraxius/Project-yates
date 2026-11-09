@@ -7,8 +7,12 @@ export const nav = [
   { label: "About YB", href: "/about", note: "Our approach and industry" },
 ];
 
-// Placeholders until the LearnWorlds login and the Stripe checkout are wired up.
-export const LOGIN_HREF = "#";
+// The course lives on LearnWorlds, which owns the accounts, passwords and
+// sessions. Members who are already signed in there go straight to their
+// course; everyone else sees LearnWorlds' own sign-in. This is a public
+// address, not a secret. (The /login page remains as a fallback.)
+export const SCHOOL_URL = "https://ybuniversity.learnworlds.com";
+export const LOGIN_HREF = SCHOOL_URL;
 export const ENROLL_HREF = "/learn/enroll";
 
 export const footerColumns = [
@@ -26,26 +30,27 @@ export const footerColumns = [
     title: "ABOUT",
     links: [
       { label: "About YB University", href: "/about" },
-      { label: "Palm Beach Yachts", href: "#" },
+      // TODO(link): point this at the Palm Beach Yachts website once the client confirms the URL.
+      { label: "Palm Beach Yachts", href: "/about" },
       { label: "Frequently Asked Questions", href: "/faq" },
-      { label: "Contact", href: "#" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
     title: "STUDENT ACCESS",
     links: [
       { label: "Log In", href: LOGIN_HREF },
-      { label: "My Learning", href: "#" },
-      { label: "Student Network", href: "#" },
+      { label: "My Learning", href: LOGIN_HREF },
+      { label: "Student Network", href: LOGIN_HREF },
       { label: "Resources", href: "/resources" },
     ],
   },
   {
     title: "LEGAL",
     links: [
-      { label: "Terms & Conditions", href: "#" },
-      { label: "Privacy Policy", href: "#" },
-      { label: "Educational Credential Disclaimer", href: "#" },
+      { label: "Terms & Conditions", href: "/terms" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Educational Credential Disclaimer", href: "/credential-disclaimer" },
     ],
   },
 ];

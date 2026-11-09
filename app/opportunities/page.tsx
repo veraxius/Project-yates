@@ -42,7 +42,7 @@ export default function OpportunitiesPage() {
         name="YB OPPORTUNITIES"
         title="TURN WHAT YOU KNOW INTO WHAT YOU CAN DO."
         variant={5}
-        src="/Corredor trabajando frente a un yate.png"
+        src="/broker-working-yacht-view.png"
         alt="Professional working on a laptop at a desk with a yacht moored outside the window"
         objectPosition="50% 45%"
       />
@@ -111,7 +111,7 @@ export default function OpportunitiesPage() {
               Applications are reviewed against the requirements of each opportunity. Projects, placements, compensation, and mentorship are subject to availability, selection, eligibility, and separate terms. Completion of a course does not guarantee employment, commissions, or a brokerage position.
             </p>
             <div className="mt-10 flex justify-center">
-              <Cta href="#">EXPLORE THE OPPORTUNITY PATHWAY</Cta>
+              <Cta href="/learn">EXPLORE THE OPPORTUNITY PATHWAY</Cta>
             </div>
           </Reveal>
         </div>

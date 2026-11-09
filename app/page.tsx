@@ -16,7 +16,7 @@ const components = [
     tags: "Professional learning · Assessments · Credential",
     href: "/learn",
     variant: 1 as const,
-    src: "/Corredor en el muelle frente a yate.png",
+    src: "/broker-dock-yacht.png",
     alt: "Young broker in a navy suit standing at the marina in front of a luxury yacht",
     pos: "25% 45%",
   },
@@ -28,7 +28,7 @@ const components = [
     tags: "Yacht tours · Events · Industry encounters",
     href: "/yb-experience",
     variant: 3 as const,
-    src: "/Llegada de lujo al puerto deportivo.png",
+    src: "/luxury-marina-arrival.png",
     alt: "Guests arriving at a luxury marina and greeted by yacht staff",
     pos: "25% 50%",
   },
@@ -40,7 +40,7 @@ const components = [
     tags: "Community · Connections · Mentorship",
     href: "/network",
     variant: 4 as const,
-    src: "/Brindis al atardecer en el yate.png",
+    src: "/sunset-toast-yacht.png",
     alt: "Friends toasting and talking on a yacht deck at sunset",
     pos: "55% 50%",
   },
@@ -52,7 +52,7 @@ const components = [
     tags: "Projects · Talent · Professional pathways",
     href: "/opportunities",
     variant: 5 as const,
-    src: "/Apreton de manos en el puerto deportivo.png",
+    src: "/handshake-marina-dock.png",
     alt: "Two professionals shaking hands on the marina dock in front of luxury yachts",
     pos: "38% 50%",
   },
@@ -71,7 +71,7 @@ export default function Home() {
       {/* 01. Hero */}
       <section className="relative isolate flex min-h-[calc(100svh-4.5rem)] items-end text-white">
         <Photo
-          src="/Golden Sunset Yacht Gathering.png"
+          src="/golden-sunset-yacht-gathering.png"
           alt="Guests gathered on a luxury yacht at golden sunset"
           quality={90}
           priority
@@ -115,7 +115,7 @@ export default function Home() {
         <div className="container-x grid gap-14 lg:grid-cols-[minmax(0,28rem)_minmax(0,34rem)] lg:justify-center lg:gap-16 xl:gap-24">
           <Reveal className="h-full">
             <Photo
-              src="/Reunión corporativa frente a yates de lujo.png"
+              src="/corporate-meeting-marina.png"
               alt="Yacht brokerage team and client reviewing documents on a marina dock"
               quality={90}
               sizes="(min-width: 1024px) 28rem, 100vw"
@@ -191,7 +191,7 @@ export default function Home() {
       {/* 04. Flagship program */}
       <section className="relative isolate flex min-h-[85svh] items-center text-white">
         <Photo
-          src="/Reunion al atardecer en la cubierta del yate.png"
+          src="/sunset-meeting-yacht-deck.png"
           alt="Professionals networking on a yacht deck at sunset with the city skyline behind"
           quality={90}
           objectPosition="50% 65%"
@@ -257,21 +257,21 @@ export default function Home() {
         <div className="container-x grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:gap-24">
           <Reveal className="grid aspect-[5/6] h-full grid-cols-5 grid-rows-2 gap-3 lg:aspect-auto">
             <Photo
-              src="/Navegante al timón en alta mar.png"
+              src="/sailor-at-helm-open-sea.png"
               alt="Sailor in a navy polo at the helm of a sailboat on open blue water"
               quality={90}
               sizes="(min-width: 1024px) 21rem, 60vw"
               className="col-span-3 row-span-2 h-full"
             />
             <Photo
-              src="/Feria náutica en el muelle.png"
+              src="/boat-show-dock.png"
               alt="Crowd walking along a boat show dock lined with yachts and flags"
               quality={90}
               sizes="(min-width: 1024px) 14rem, 40vw"
               className="col-span-2 h-full"
             />
             <Photo
-              src="/Corredor trabajando frente al puerto deportivo.png"
+              src="/broker-working-marina-view.png"
               alt="Broker working on a laptop at a desk with a marina full of yachts behind"
               quality={90}
               objectPosition="85% 50%"
@@ -326,7 +326,7 @@ export default function Home() {
             </Reveal>
           </div>
           <Photo
-            src="/Filmación glamorosa en yate de lujo.png"
+            src="/glamorous-yacht-film-shoot.png"
             alt="Videographer with a gimbal filming a production crew on the deck of a luxury yacht"
             quality={90}
             sizes="(min-width: 1024px) 50vw, 100vw"
@@ -362,7 +362,7 @@ export default function Home() {
       {/* 09. Final CTA */}
       <section className="relative isolate flex min-h-[80svh] items-center justify-center text-center text-white">
         <Photo
-          src="/Entrevista en cubierta de yate.png"
+          src="/yacht-deck-interview.png"
           alt="Friends laughing together on a yacht deck while a video crew films them"
           quality={90}
           objectPosition="50% 55%"

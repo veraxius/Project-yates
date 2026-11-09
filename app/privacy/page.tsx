@@ -1,0 +1,75 @@
+import type { Metadata } from "next";
+import { LegalPage } from "../../components/LegalPage";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "What personal data YB University collects, why, and what rights you have.",
+};
+
+export default function PrivacyPage() {
+  return (
+    <LegalPage
+      title="Privacy Policy"
+      intro="This policy explains what personal information YB University collects, why we collect it, who we share it with, how long we keep it, and the rights you have."
+      sections={[
+        {
+          heading: "Who is responsible",
+          paragraphs: [
+            "[LEGAL ENTITY NAME], [REGISTERED ADDRESS], is responsible for your data. Contact: [PRIVACY CONTACT EMAIL]. [LEGAL REVIEW REQUIRED: add data protection officer details if applicable.]",
+          ],
+        },
+        {
+          heading: "Data we collect",
+          items: [
+            "Contact and account data: name, email address, and the password you choose (it is passed to our learning platform and is not stored on this website).",
+            "Payment data: handled by Stripe. We receive confirmation that you paid and your name and email, not your card number.",
+            "Learning data: progress, assessment results, assignments and credential status, held in our learning platform.",
+            "Portfolio and application data: work you submit and information you provide when you apply for projects, mentorship or other opportunities.",
+            "Messages: what you send us when you contact us.",
+            "Technical data: basic information such as IP address and browser type, used for security and to keep the service running.",
+          ],
+        },
+        {
+          heading: "Why we use it",
+          items: [
+            "To create your account, take payment and give you access to the course.",
+            "To deliver the program, assess your work and issue the educational credential.",
+            "To review applications for selected projects and opportunities.",
+            "To send service emails (confirmation, access, password help) and answer your questions.",
+            "To protect the site against fraud and abuse and to meet legal obligations.",
+          ],
+        },
+        {
+          heading: "Who we share it with",
+          paragraphs: [
+            "We use service providers who process data on our behalf: Stripe (payments), LearnWorlds (learning platform), [EMAIL / AUTOMATION PROVIDER, e.g. n8n and email service], and our hosting and security providers (Railway, Cloudflare). [LEGAL REVIEW REQUIRED: confirm the final list, add Palm Beach Yachts if data is shared with it, and describe international transfers.]",
+          ],
+        },
+        {
+          heading: "How long we keep it",
+          paragraphs: [
+            "[RETENTION PERIODS: e.g. account and learning data for the access period plus X years; payment records as required by tax law; application data for X months.]",
+          ],
+        },
+        {
+          heading: "Your rights",
+          paragraphs: [
+            "Depending on where you live, you may have the right to access, correct, delete or export your data, to object to or restrict some uses, and to complain to a data protection authority. To use these rights, write to [PRIVACY CONTACT EMAIL]. [LEGAL REVIEW REQUIRED: tailor to the laws that apply, such as GDPR or US state privacy laws.]",
+          ],
+        },
+        {
+          heading: "Cookies",
+          paragraphs: [
+            "This website does not set tracking cookies at the moment. Our learning platform uses cookies to keep you signed in. [LEGAL REVIEW REQUIRED: update if analytics or advertising tools are added.]",
+          ],
+        },
+        {
+          heading: "Security, children and changes",
+          paragraphs: [
+            "We use technical and organizational measures to protect your data, but no system is perfectly secure. The program is not directed to children under [MINIMUM AGE]. We will post changes to this policy on this page. [LEGAL REVIEW REQUIRED]",
+          ],
+        },
+      ]}
+    />
+  );
+}

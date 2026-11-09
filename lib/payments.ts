@@ -16,7 +16,12 @@ export function isDemo(): boolean {
 }
 
 export function siteUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  const url = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!url && process.env.NODE_ENV === "production") {
+    // Stripe sends the buyer back to this address, so a wrong value would send them to localhost.
+    throw new Error("NEXT_PUBLIC_SITE_URL must be set in production");
+  }
+  return (url ?? "http://localhost:3000").replace(/\/$/, "");
 }
 
 export type PaidSession = { paid: boolean; email: string; name: string };

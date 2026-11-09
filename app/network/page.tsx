@@ -38,7 +38,7 @@ export default function NetworkPage() {
         name="YB NETWORK"
         title="YOUR PEOPLE. YOUR INDUSTRY. YOUR NEXT CONNECTION."
         variant={4}
-        src="/Capitan reunido con la tripulacion.png"
+        src="/captain-crew-meeting.png"
         alt="Yacht captain meeting with crew and guests around a table on the bridge"
         objectPosition="50% 45%"
       />
@@ -63,7 +63,7 @@ export default function NetworkPage() {
         <div className="container-x mt-16">
           <Reveal>
             <Photo
-              src="/Cierre de venta en cubierta de yate.png"
+              src="/sale-closing-yacht-deck.png"
               alt="Broker shaking hands with a smiling couple on a yacht deck"
               objectPosition="50% 55%"
               sizes="(min-width: 1280px) 1200px, 100vw"
@@ -100,7 +100,7 @@ export default function NetworkPage() {
               A focused community built around knowledge, contribution, and professional relationships.
             </p>
             <div className="mt-10 flex justify-center">
-              <Cta href="#" variant="light">JOIN THE YB NETWORK</Cta>
+              <Cta href="/learn/enroll" variant="light">JOIN THE YB NETWORK</Cta>
             </div>
           </Reveal>
         </div>

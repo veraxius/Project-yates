@@ -7,7 +7,7 @@ import {
 } from "../../../lib/learnworlds";
 import { notify } from "../../../lib/notify";
 import { getSession, isDemo } from "../../../lib/payments";
-import { clientIp, limited } from "../../../lib/rate-limit";
+import { clientIp, isJsonRequest, limited } from "../../../lib/rate-limit";
 
 // Step after payment: the buyer chooses a password, we create their
 // LearnWorlds account with it, enroll them, and email a confirmation.
@@ -21,6 +21,9 @@ function passwordProblem(p: string): string | null {
 }
 
 export async function POST(req: Request) {
+  if (!isJsonRequest(req)) {
+    return Response.json({ error: "Unsupported content type." }, { status: 415 });
+  }
   if (limited(`activate:${clientIp(req)}`, 8, 10 * 60_000)) {
     return Response.json({ error: "Too many attempts. Please try again in a few minutes." }, { status: 429 });
   }

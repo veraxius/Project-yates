@@ -86,7 +86,7 @@ export function Header() {
           className="flex min-h-11 shrink-0 items-center"
         >
           <Image
-            src="/YB University LOGO HORIZONTAL MONOCHROME-03.png"
+            src="/yb-university-logo-horizontal-white.png"
             alt="YB University"
             width={160}
             height={38}

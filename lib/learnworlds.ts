@@ -8,6 +8,8 @@
 // Needs: LEARNWORLDS_SCHOOL_URL (e.g. https://school.learnworlds.com),
 //        LEARNWORLDS_CLIENT_ID, LEARNWORLDS_API_TOKEN, LEARNWORLDS_COURSE_ID.
 
+import { SCHOOL_URL } from "./site";
+
 export function learnworldsConfigured(): boolean {
   return Boolean(
     process.env.LEARNWORLDS_SCHOOL_URL &&
@@ -23,7 +25,7 @@ function schoolUrl(): string {
 
 /** Where the student signs in to take the course. */
 export function loginUrl(): string {
-  return process.env.LEARNWORLDS_LOGIN_URL ?? schoolUrl() ?? "";
+  return process.env.LEARNWORLDS_LOGIN_URL || schoolUrl() || SCHOOL_URL;
 }
 
 /** LearnWorlds' own "forgot password" page, used for the "change my password" link. */

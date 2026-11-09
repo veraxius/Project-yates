@@ -20,7 +20,7 @@ export default function LearnPage() {
         name="YB LEARN"
         title="LEARN THE BUSINESS. BUILD THE SKILLS."
         variant={1}
-        src="/Puente de mando de un superyate.png"
+        src="/superyacht-bridge.png"
         alt="Helm station of a luxury yacht with navigation and engine monitoring screens"
         objectPosition="60% 50%"
       >

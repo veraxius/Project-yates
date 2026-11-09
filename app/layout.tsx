@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
+import { allowIndexing } from "../lib/site-env";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,6 +17,10 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
+  // <meta name="robots">: noindex, nofollow unless ROBOTS_ALLOW_INDEX=true
+  robots: allowIndexing()
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true },
   title: {
     default: "YB University | Discover a World. Make It Yours.",
     template: "%s | YB University",

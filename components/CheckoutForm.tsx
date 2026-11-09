@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { course } from "../lib/course";
 
@@ -89,8 +90,8 @@ export function CheckoutForm({ canceled = false }: { canceled?: boolean }) {
         />
         <span>
           I agree to the{" "}
-          <a href="#" className="underline underline-offset-4">Terms &amp; Conditions</a> and the{" "}
-          <a href="#" className="underline underline-offset-4">Privacy Policy</a>, and I understand
+          <Link href="/terms" target="_blank" className="underline underline-offset-4">Terms &amp; Conditions</Link> and the{" "}
+          <Link href="/privacy" target="_blank" className="underline underline-offset-4">Privacy Policy</Link>, and I understand
           this is an educational credential, not a brokerage license.
         </span>
       </label>

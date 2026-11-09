@@ -41,7 +41,7 @@ export default function ExperiencePage() {
         name="YB EXPERIENCE"
         title="DON'T JUST STUDY YACHTING. GET CLOSER TO IT."
         variant={3}
-        src="/Evento de networking en terraza del puerto.png"
+        src="/marina-networking-event.png"
         alt="Industry professionals networking on a marina terrace in front of luxury yachts"
         objectPosition="50% 55%"
       />
@@ -59,7 +59,7 @@ export default function ExperiencePage() {
           </Reveal>
           <Reveal delay={120}>
             <Photo
-              src="/Corredor mostrando el puente de mando.png"
+              src="/broker-showing-helm.png"
               alt="Yacht broker showing a couple the helm station during an onboard visit"
               objectPosition="45% 50%"
               sizes="(min-width: 1024px) 50vw, 100vw"
@@ -89,13 +89,13 @@ export default function ExperiencePage() {
             {[
               {
                 name: "MEET THE INDUSTRY",
-                src: "/Inspector revisando el casco en astillero.png",
+                src: "/surveyor-hull-inspection-boatyard.png",
                 alt: "Marine surveyor inspecting a yacht hull in a boatyard",
                 pos: "60% 50%",
               },
               {
                 name: "CONTENT CREATION MISSIONS",
-                src: "/Equipo de video filmando en cubierta.png",
+                src: "/video-crew-filming-deck.png",
                 alt: "Video crew filming on a yacht deck with a professional camera",
                 pos: "50% 50%",
               },
@@ -125,7 +125,7 @@ export default function ExperiencePage() {
               Experiences are offered according to availability, eligibility, permissions, and applicable event requirements. Participation is not guaranteed by course enrollment.
             </p>
             <div className="mt-10 flex justify-center">
-              <Cta href="#" variant="light">EXPLORE UPCOMING EXPERIENCES</Cta>
+              <Cta href="/contact" variant="light">EXPLORE UPCOMING EXPERIENCES</Cta>
             </div>
           </Reveal>
         </div>

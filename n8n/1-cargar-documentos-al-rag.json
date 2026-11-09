@@ -1,0 +1,480 @@
+{
+  "name": "YB - 1. Cargar documentos de Google Drive al RAG (Qdrant)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## FLUJO 1 · Cargar documentos al RAG\n\nLee tu carpeta de Google Drive y guarda el conocimiento en Qdrant. **Se ejecuta primero.**\n\n### Antes de activarlo\n1. Crea las credenciales: **Google Drive OAuth2**, **OpenAI** y **Qdrant API**, y elígelas en los nodos con aviso rojo.\n2. Pega el **ID de tu carpeta de Drive** en estos 3 nodos: *Listar archivos de la carpeta*, *Drive: archivo nuevo* y *Drive: archivo modificado*. El ID es lo que va al final de la dirección: drive.google.com/drive/folders/**ESTE_ES_EL_ID**\n3. En *Preparar archivo* cambia **qdrantUrl** por la dirección de tu Qdrant (sin barra final). Si cambias el nombre de la colección, cámbialo también en *Guardar en Qdrant*.\n\n### Cómo usarlo\n1. Ejecuta **Manual: cargar todo ahora** (carga lo que ya está en la carpeta).\n2. Comprueba en Qdrant que existe la colección **yb_knowledge** con puntos.\n3. Activa el flujo: desde entonces carga solo los archivos nuevos o modificados, cada minuto.\n\n### Ojo\n- Formatos: PDF, Word, texto, CSV y Google Docs/Hojas/Presentaciones.\n- Si **borras** un archivo de Drive, sus trozos siguen en Qdrant.\n- Los vectores (**text-embedding-3-small**) deben ser los mismos que use el flujo 2.\n- Este flujo no está probado en tu n8n: si un nodo pide ajustes, es normal.",
+        "height": 760,
+        "width": 560,
+        "color": 4
+      },
+      "id": "e0000000-0000-4000-8000-000000000099",
+      "name": "LEE ESTO PRIMERO",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -60
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Manual: cargar todo ahora",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "operation": "search",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "PEGA_AQUI_EL_ID_DE_LA_CARPETA",
+            "mode": "id"
+          },
+          "whatToSearch": "files"
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name",
+            "mimeType",
+            "webViewLink",
+            "modifiedTime"
+          ]
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Listar archivos de la carpeta",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "PEGA_AQUI_EL_ID_DE_LA_CARPETA",
+          "mode": "id"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Drive: archivo nuevo",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "PEGA_AQUI_EL_ID_DE_LA_CARPETA",
+          "mode": "id"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "Drive: archivo modificado",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f2",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "f3",
+              "name": "mimeType",
+              "value": "={{ $json.mimeType }}",
+              "type": "string"
+            },
+            {
+              "id": "f4",
+              "name": "link",
+              "value": "={{ $json.webViewLink }}",
+              "type": "string"
+            },
+            {
+              "id": "f5",
+              "name": "qdrantUrl",
+              "value": "https://PEGA-AQUI-LA-URL-DE-QDRANT:6333",
+              "type": "string"
+            },
+            {
+              "id": "f6",
+              "name": "collection",
+              "value": "yb_knowledge",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "name": "Preparar archivo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ /pdf|text\\/|wordprocessingml|csv|google-apps\\.(document|presentation|spreadsheet)/.test($json.mimeType) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "name": "¿Tipo de archivo soportado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        720,
+        200
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a1000000-0000-4000-8000-000000000007",
+      "name": "Saltar (tipo no soportado)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        960,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.qdrantUrl }}/collections/{{ $json.collection }}/points/delete?wait=true",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "qdrantApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'metadata.file_id', match: { value: $json.id } } ] } }) }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000008",
+      "name": "Borrar versión anterior del archivo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        100
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Preparar archivo').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf",
+              "sheetsToFormat": "text/csv",
+              "slidesToFormat": "application/pdf",
+              "drawingsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000009",
+      "name": "Descargar archivo",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1200,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "yb_knowledge",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000010",
+      "name": "Guardar en Qdrant",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1440,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "binaryDataKey": "data",
+        "loader": "auto",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "file_id",
+                "value": "={{ $('Preparar archivo').item.json.id }}"
+              },
+              {
+                "name": "file_name",
+                "value": "={{ $('Preparar archivo').item.json.name }}"
+              },
+              {
+                "name": "source_url",
+                "value": "={{ $('Preparar archivo').item.json.link }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000011",
+      "name": "Leer documento",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1540,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "chunkSize": 1000,
+        "chunkOverlap": 150,
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000012",
+      "name": "Dividir en trozos",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000013",
+      "name": "Vectores (OpenAI)",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1340,
+        340
+      ]
+    }
+  ],
+  "connections": {
+    "Manual: cargar todo ahora": {
+      "main": [
+        [
+          {
+            "node": "Listar archivos de la carpeta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Listar archivos de la carpeta": {
+      "main": [
+        [
+          {
+            "node": "Preparar archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive: archivo nuevo": {
+      "main": [
+        [
+          {
+            "node": "Preparar archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive: archivo modificado": {
+      "main": [
+        [
+          {
+            "node": "Preparar archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar archivo": {
+      "main": [
+        [
+          {
+            "node": "¿Tipo de archivo soportado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Tipo de archivo soportado?": {
+      "main": [
+        [
+          {
+            "node": "Borrar versión anterior del archivo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Saltar (tipo no soportado)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Borrar versión anterior del archivo": {
+      "main": [
+        [
+          {
+            "node": "Descargar archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar archivo": {
+      "main": [
+        [
+          {
+            "node": "Guardar en Qdrant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer documento": {
+      "ai_document": [
+        [
+          {
+            "node": "Guardar en Qdrant",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dividir en trozos": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Leer documento",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vectores (OpenAI)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Guardar en Qdrant",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
