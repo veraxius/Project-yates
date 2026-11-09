@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { canonicalFor } from "../../lib/site-env";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Reveal";
 
 export const metadata: Metadata = {
+  alternates: canonicalFor("/about"),
   title: "About YB University",
   description:
     "A new perspective on an established industry. YB University is connected to Palm Beach Yachts and built to introduce a new generation to the business of yachting.",

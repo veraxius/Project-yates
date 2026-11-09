@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { canonicalFor } from "../../lib/site-env";
 import Link from "next/link";
 import { Reveal } from "../../components/Reveal";
 import { SCHOOL_URL } from "../../lib/site";
 
 export const metadata: Metadata = {
+  alternates: canonicalFor("/login"),
   title: "Log In",
   description: "Sign in to your YB University course.",
 };

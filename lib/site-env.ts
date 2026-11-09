@@ -9,3 +9,27 @@
 export function allowIndexing(): boolean {
   return process.env.ROBOTS_ALLOW_INDEX === "true";
 }
+
+/** The public address of the site (NEXT_PUBLIC_SITE_URL), without a trailing slash, or null if not set. */
+export function publicSiteUrl(): string | null {
+  const url = process.env.NEXT_PUBLIC_SITE_URL;
+  return url ? url.replace(/\/$/, "") : null;
+}
+
+/**
+ * Canonical address of a page, for `metadata.alternates`.
+ *
+ * It tells Google which address is the official one, so the same page served
+ * from two addresses (the Railway one and the final domain, or with tracking
+ * parameters such as ?utm_source=) is not counted as duplicate content.
+ * Every page passes its own path; it must never be set once for the whole site,
+ * or every page would claim to be the home page.
+ *
+ * Returns undefined when NEXT_PUBLIC_SITE_URL is not set (no tag is written),
+ * so a missing variable can never break the build.
+ */
+export function canonicalFor(path: string): { canonical: string } | undefined {
+  const base = publicSiteUrl();
+  if (!base) return undefined;
+  return { canonical: path === "/" ? `${base}/` : `${base}${path}` };
+}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { canonicalFor } from "../../lib/site-env";
 import { Cta } from "../../components/Cta";
 import { PageHero } from "../../components/PageHero";
 import { Photo } from "../../components/Photo";
@@ -7,6 +8,7 @@ import { curriculum, learn } from "../../lib/course";
 import { ENROLL_HREF } from "../../lib/site";
 
 export const metadata: Metadata = {
+  alternates: canonicalFor("/learn"),
   title: "YB Learn",
   description:
     "The YB Broker Certification Experience: Yacht Brokerage Professional Foundations. 16 modules, practical assignments, competency assessments and one final challenge.",

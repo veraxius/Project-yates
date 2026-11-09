@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { canonicalFor } from "../../lib/site-env";
 import Link from "next/link";
 import { Reveal } from "../../components/Reveal";
 
 export const metadata: Metadata = {
+  alternates: canonicalFor("/contact"),
   title: "Contact",
   description: "Get in touch with YB University.",
 };

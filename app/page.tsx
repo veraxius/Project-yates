@@ -3,6 +3,8 @@ import { Cta } from "../components/Cta";
 import { Photo } from "../components/Photo";
 import { Reveal } from "../components/Reveal";
 import { RevealWords } from "../components/RevealWords";
+import type { Metadata } from "next";
+import { canonicalFor } from "../lib/site-env";
 
 // Start time (ms) of an element in the hero entrance (see globals.css).
 const at = (ms: number) => ({ "--d": `${ms}ms` }) as React.CSSProperties;
@@ -64,6 +66,10 @@ const steps = [
   { n: "03", name: "DO", body: "Apply what you learn through practical assignments." },
   { n: "04", name: "DEMONSTRATE", body: "Show your understanding through assessments and professional challenges." },
 ];
+
+export const metadata: Metadata = {
+  alternates: canonicalFor("/"),
+};
 
 export default function Home() {
   return (

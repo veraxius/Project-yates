@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { canonicalFor } from "../../lib/site-env";
 import { LegalPage } from "../../components/LegalPage";
 
 export const metadata: Metadata = {
+  alternates: canonicalFor("/privacy"),
   title: "Privacy Policy",
   description: "What personal data YB University collects, why, and what rights you have.",
 };
