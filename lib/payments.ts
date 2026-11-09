@@ -24,7 +24,8 @@ export function siteUrl(): string {
   return (url ?? "http://localhost:3000").replace(/\/$/, "");
 }
 
-export type PaidSession = { paid: boolean; email: string; name: string };
+// `created` is when the payment session started (seconds since 1970).
+export type PaidSession = { paid: boolean; email: string; name: string; created: number };
 
 async function stripe<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${STRIPE_API}${path}`, {
@@ -85,12 +86,15 @@ export async function getSession(id: string): Promise<PaidSession | null> {
 
   if (isDemo()) {
     const d = readDemoId(id);
-    return d ? { paid: true, email: d.email, name: d.name } : null;
+    return d
+      ? { paid: true, email: d.email, name: d.name, created: Math.floor(Date.now() / 1000) }
+      : null;
   }
   if (!stripeConfigured() || !id.startsWith("cs_")) return null;
 
   try {
     const s = await stripe<{
+      created: number;
       payment_status: string;
       customer_email: string | null;
       customer_details: { email: string | null; name: string | null } | null;
@@ -100,6 +104,7 @@ export async function getSession(id: string): Promise<PaidSession | null> {
       paid: s.payment_status === "paid" || s.payment_status === "no_payment_required",
       email: (s.customer_details?.email ?? s.customer_email ?? "").toLowerCase(),
       name: s.metadata?.name ?? s.customer_details?.name ?? "",
+      created: s.created,
     };
   } catch {
     return null;

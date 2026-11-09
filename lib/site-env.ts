@@ -10,6 +10,20 @@ export function allowIndexing(): boolean {
   return process.env.ROBOTS_ALLOW_INDEX === "true";
 }
 
+/**
+ * How a buyer gets their LearnWorlds password after paying:
+ *
+ *   "password" (default) Only paying members get an account. After paying, the
+ *              buyer chooses their name and password on our /welcome page and
+ *              we send them to LearnWorlds. Needs a test to confirm that the
+ *              LearnWorlds API accepts a password when creating a user.
+ *   "email"    Fallback if that test fails: the account is created WITHOUT a
+ *              password and the buyer creates one with the reset link.
+ */
+export function activationMode(): "email" | "password" {
+  return process.env.ACTIVATION_MODE === "email" ? "email" : "password";
+}
+
 /** The public address of the site (NEXT_PUBLIC_SITE_URL), without a trailing slash, or null if not set. */
 export function publicSiteUrl(): string | null {
   const url = process.env.NEXT_PUBLIC_SITE_URL;

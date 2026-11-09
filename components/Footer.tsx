@@ -27,11 +27,9 @@ export function Footer() {
                 {col.links.map((link) => (
                   <li key={link.label}>
                     {link.href.startsWith("http") ? (
-                      // External address (the LearnWorlds school): a plain link that opens in a new tab.
+                      // External address (the LearnWorlds course): a plain link that opens in the same tab.
                       <a
                         href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="inline-block py-3 text-sm text-white/70 transition-colors hover:text-white lg:inline lg:py-0"
                       >
                         {link.label}

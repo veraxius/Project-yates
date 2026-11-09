@@ -4,6 +4,7 @@ import { Cta } from "../../components/Cta";
 import { PageHero } from "../../components/PageHero";
 import { Photo } from "../../components/Photo";
 import { Reveal } from "../../components/Reveal";
+import { ENROLL_HREF } from "../../lib/site";
 
 export const metadata: Metadata = {
   alternates: canonicalFor("/network"),
@@ -102,7 +103,7 @@ export default function NetworkPage() {
               A focused community built around knowledge, contribution, and professional relationships.
             </p>
             <div className="mt-10 flex justify-center">
-              <Cta href="/learn/enroll" variant="light">JOIN THE YB NETWORK</Cta>
+              <Cta href={ENROLL_HREF} variant="light">JOIN THE YB NETWORK</Cta>
             </div>
           </Reveal>
         </div>

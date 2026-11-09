@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { canonicalFor } from "../../lib/site-env";
-import Link from "next/link";
 import { Reveal } from "../../components/Reveal";
-import { SCHOOL_URL } from "../../lib/site";
+import { ENROLL_HREF, LOGIN_HREF } from "../../lib/site";
 
 export const metadata: Metadata = {
   alternates: canonicalFor("/login"),
@@ -13,10 +12,9 @@ export const metadata: Metadata = {
 // Members sign in on LearnWorlds, which owns the accounts, passwords and
 // sessions. This site does not store passwords or sessions of its own.
 //
-// The footer "Log In" link already goes straight to the school (SCHOOL_URL in
-// lib/site.ts). This page is only a fallback; it uses the same address unless
-// LEARNWORLDS_LOGIN_URL is set to point somewhere else (for example a custom
-// school domain), so that variable is optional.
+// The footer "Log In" link already goes straight to the course page on
+// LearnWorlds (COURSE_URL in lib/site.ts). This page is only a fallback that
+// uses the same address.
 //
 // SECURITY NOTE: /learn, /network and /opportunities on this site are public
 // marketing pages with no member-only content, so there is nothing to protect
@@ -24,7 +22,7 @@ export const metadata: Metadata = {
 // documents) must live inside LearnWorlds, not in this app. If members-only
 // pages are ever added to this app, they must check a verified session in the
 // server (proxy.ts or the route), never just hide the link.
-const loginUrl = process.env.LEARNWORLDS_LOGIN_URL ?? SCHOOL_URL;
+const loginUrl = LOGIN_HREF;
 
 export default function LoginPage() {
   return (
@@ -59,9 +57,9 @@ export default function LoginPage() {
             )}
             <p className="mt-8 border-t border-navy-900/15 pt-6 text-sm text-navy-900/70">
               Not a member yet?{" "}
-              <Link href="/learn/enroll" className="font-semibold underline underline-offset-4">
+              <a href={ENROLL_HREF} className="font-semibold underline underline-offset-4">
                 Enroll in YB Learn
-              </Link>
+              </a>
               . Only people who have enrolled have an account.
             </p>
           </Reveal>

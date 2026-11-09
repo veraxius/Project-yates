@@ -20,6 +20,9 @@ export type SiteEvent =
       // Link for "I want to change my password" (LearnWorlds' reset page).
       passwordResetUrl: string;
       alreadyHadAccount: boolean;
+      // true when the account has NO password yet, so the email must tell the
+      // buyer to create one (with passwordResetUrl) to be able to sign in again.
+      needsPassword: boolean;
     };
 
 export async function notify(payload: SiteEvent): Promise<boolean> {

@@ -12,8 +12,11 @@ export const nav = [
 // course; everyone else sees LearnWorlds' own sign-in. This is a public
 // address, not a secret. (The /login page remains as a fallback.)
 export const SCHOOL_URL = "https://ybuniversity.learnworlds.com";
-export const LOGIN_HREF = SCHOOL_URL;
-export const ENROLL_HREF = "/learn/enroll";
+// The course page on LearnWorlds: members go in, everyone else sees the course
+// with its buy button. Every "Enroll" and "Log In" button on this site goes here.
+export const COURSE_URL = `${SCHOOL_URL}/course/the-modern-yacht-broker`;
+export const LOGIN_HREF = COURSE_URL;
+export const ENROLL_HREF = COURSE_URL;
 
 export const footerColumns = [
   {

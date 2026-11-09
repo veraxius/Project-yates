@@ -55,7 +55,8 @@ export type Student = { id: string; existed: boolean };
 export async function createOrFindStudent(input: {
   email: string;
   name: string;
-  password: string;
+  /** Omit it to create the account without a password (the buyer sets one later). */
+  password?: string;
 }): Promise<Student> {
   // VERIFY: POST /users — field names (email, username, password, firstName, lastName).
   const [firstName, ...rest] = input.name.trim().split(/\s+/);
@@ -95,4 +96,35 @@ export async function enrollInCourse(userId: string): Promise<void> {
     }),
   });
   if (!res.ok) throw new Error(`LearnWorlds could not enroll the student (${res.status})`);
+}
+
+/**
+ * Asks LearnWorlds for a one-time sign-in link, so a buyer who just paid lands
+ * inside the course already signed in. It only opens ONE session: to come back
+ * later the student needs a password (see ACTIVATION_MODE in lib/site-env.ts).
+ *
+ * Returns null on any problem; the caller then falls back to the normal
+ * sign-in address. Needs a LearnWorlds plan that includes SSO / API.
+ */
+export async function ssoLoginUrl(email: string): Promise<string | null> {
+  try {
+    // VERIFY: Single Sign-on endpoint path and field names (email, redirectUrl, url).
+    const res = await lw("/sso", {
+      method: "POST",
+      body: JSON.stringify({ email, redirectUrl: loginUrl() }),
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { url?: unknown };
+    if (typeof data.url !== "string") return null;
+
+    // Safety: only ever send the buyer to LearnWorlds itself, whatever the
+    // response says, so a bad response can never turn into an open redirect.
+    const target = new URL(data.url);
+    const school = new URL(loginUrl());
+    const sameSchool = target.host === school.host;
+    const onLearnWorlds = target.hostname.endsWith(".learnworlds.com");
+    return target.protocol === "https:" && (sameSchool || onLearnWorlds) ? target.toString() : null;
+  } catch {
+    return null;
+  }
 }
