@@ -11,8 +11,9 @@ export const metadata: Metadata = {
 
 // TODO(contact): set CONTACT_EMAIL in the environment (before building) with
 // the address the client wants to receive messages on. No address is invented.
-// A contact form (with spam protection and rate limiting) can replace the
-// mailto link later; the /api routes already show the pattern to follow.
+// A contact form can replace the mailto link later. It would be the first
+// thing on this site that accepts input, so it needs spam protection and a
+// rate limit that does not trust client-sent headers for the visitor's address.
 const email = process.env.CONTACT_EMAIL;
 
 export default function ContactPage() {

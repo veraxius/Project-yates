@@ -1,17 +1,14 @@
-// Single source of truth for the course shown on /learn and /learn/enroll.
+// Single source of truth for the course shown on /learn.
 // Copy comes from the client's YB LEARN document. Nothing here is invented:
 // the individual module titles were not in the documents, so only the four
 // phases (and their module ranges) are listed.
+// The price is not kept here: it is set in LearnWorlds, where the course is sold.
 
 export const course = {
   name: "The YB Broker Certification Experience",
   title: "Yacht Brokerage Professional Foundations",
   tagline: "Your first step into yacht brokerage.",
   modules: 16,
-  // Shown next to the pay button. The real amount lives in Stripe (the Price
-  // set in STRIPE_PRICE_ID); this label is only for display. Leave empty until
-  // the client confirms the price.
-  priceLabel: process.env.NEXT_PUBLIC_COURSE_PRICE_LABEL ?? "",
   credentialNote:
     "This is a YB University-issued educational credential. It is not a government-issued brokerage license or a substitute for any licensing requirements that may apply.",
 } as const;

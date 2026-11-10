@@ -6,13 +6,6 @@ export default function robots(): MetadataRoute.Robots {
   if (!allowIndexing()) {
     return { rules: { userAgent: "*", disallow: "/" } };
   }
-  return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      // Transactional pages and the API have nothing useful to index.
-      disallow: ["/api/", "/welcome"],
-    },
-  };
+  return { rules: { userAgent: "*", allow: "/" } };
   // TODO(domain): once the final domain exists, add  sitemap: "https://<domain>/sitemap.xml"
 }

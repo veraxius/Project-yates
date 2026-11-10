@@ -13,6 +13,10 @@ const isDev = process.env.NODE_ENV === "development";
 // inline <script> tags (the React payload) into statically generated pages. The
 // alternative (per-request nonces) forces every page to be rendered on each
 // visit and would turn off static generation and caching, so it is not used.
+// What keeps that acceptable: this site has no API routes, no forms and no
+// accounts (enrollment, payment and sign-in all happen on LearnWorlds), so no
+// visitor input is ever written into a page. If that changes (a contact form,
+// a search box, anything that shows input back), revisit this policy.
 //
 // If you later add a third-party service, extend the matching directive:
 //   Stripe.js / embedded checkout -> script-src, frame-src, connect-src https://js.stripe.com / https://api.stripe.com
@@ -56,6 +60,17 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
+  },
+
+  // Addresses of the on-site checkout that was removed when enrollment, payment
+  // and accounts moved to LearnWorlds. They now lead to the course page, whose
+  // "Enroll" buttons go to LearnWorlds. Temporary (307) on purpose, so browsers
+  // do not remember them forever.
+  async redirects() {
+    return [
+      { source: "/learn/enroll", destination: "/learn", permanent: false },
+      { source: "/welcome", destination: "/learn", permanent: false },
+    ];
   },
 
   images: {

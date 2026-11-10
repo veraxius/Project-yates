@@ -38,9 +38,8 @@ function passesBasicAuth(request: NextRequest, user: string, pass: string): bool
 }
 
 // Paths that must stay reachable even when the staging password gate is on:
-//  - Stripe cannot send a password to the webhook (it has its own signature check)
 //  - crawlers must be able to read robots.txt to learn they are not welcome
-const OPEN_PATHS = new Set(["/api/stripe/webhook", "/robots.txt"]);
+const OPEN_PATHS = new Set(["/robots.txt"]);
 
 // Hosts that never represent a real visitor on the public internet.
 // TODO(railway): confirm the health check host in the Railway dashboard; if the
@@ -102,6 +101,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip Next's own build assets; everything else (pages, /api, public files) passes through.
+  // Skip Next's own build assets; everything else (pages, public files) passes through.
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
