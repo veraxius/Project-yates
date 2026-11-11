@@ -1,5 +1,7 @@
 export const nav = [
-  { label: "The Experience", href: "/#experience", note: "Overview of the four components" },
+  // "The Experience" (/#experience) was removed from the menu: it sat next to
+  // "YB EXPERIENCE" and read like the same tab twice. The home page's hero buttons
+  // still scroll to that section.
   { label: "YB LEARN", href: "/learn", note: "Broker Certification Experience" },
   { label: "YB EXPERIENCE", href: "/yb-experience", note: "Events & Experiences" },
   { label: "YB NETWORK", href: "/network", note: "Community & Relationships" },
@@ -17,6 +19,27 @@ export const SCHOOL_URL = "https://ybuniversity.learnworlds.com";
 export const COURSE_URL = `${SCHOOL_URL}/course/the-modern-yacht-broker`;
 export const LOGIN_HREF = COURSE_URL;
 export const ENROLL_HREF = COURSE_URL;
+
+// Social accounts shown as icons in the footer. An icon appears only once its
+// address is filled in, so the footer never shows a dead link.
+// TODO(link): the client still has to send the account addresses.
+export const socialLinks: { id: "instagram" | "facebook" | "x" | "linkedin" | "youtube"; label: string; href: string }[] = [
+  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/palm_beach_yachts/" },
+  { id: "facebook", label: "Facebook", href: "https://www.facebook.com/yachtbrokeruniversity/" },
+  { id: "x", label: "X", href: "https://x.com/PBYachtSales" },
+  { id: "linkedin", label: "LinkedIn", href: "" },
+  { id: "youtube", label: "YouTube", href: "" },
+];
+
+// The parts of the Palm Beach Yachts ecosystem, shown in the footer. Until a logo
+// file is added (`logo`: a path in /public, white on transparent) the name is shown
+// as text, and it becomes a link once `href` is filled in.
+// TODO(link): the client still has to send the logo files and the addresses.
+export const ecosystem: { name: string; href?: string; logo?: string; logoWidth?: number; logoHeight?: number }[] = [
+  { name: "YB University", href: "/", logo: "/yb-university-logo-horizontal-white.png", logoWidth: 160, logoHeight: 38 },
+  { name: "Peanut Island Boat Club" },
+  { name: "Palm Beach Yachts" },
+];
 
 export const footerColumns = [
   {

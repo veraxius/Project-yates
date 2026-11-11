@@ -77,11 +77,11 @@ export default function Home() {
       {/* 01. Hero */}
       <section className="relative isolate flex min-h-[calc(100svh-4.5rem)] items-end text-white">
         <Photo
-          src="/golden-sunset-yacht-gathering.png"
-          alt="Guests gathered on a luxury yacht at golden sunset"
+          src="/joyful-couple-sunset-marina.png"
+          alt="A smiling couple on a yacht at sunset, with people talking on deck behind them"
           quality={90}
           priority
-          objectPosition="60% 50%"
+          objectPosition="72% 50%"
           settle
           className="absolute inset-0 -z-10"
         />
@@ -270,9 +270,10 @@ export default function Home() {
               className="col-span-3 row-span-2 h-full"
             />
             <Photo
-              src="/boat-show-dock.png"
-              alt="Crowd walking along a boat show dock lined with yachts and flags"
+              src="/yb-university-polo-embroidered-logo.png"
+              alt="Close-up of the YB University logo embroidered on a white polo, with a yacht blurred behind"
               quality={90}
+              objectPosition="68% 55%"
               sizes="(min-width: 1024px) 14rem, 40vw"
               className="col-span-2 h-full"
             />

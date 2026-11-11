@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { canonicalFor } from "../../lib/site-env";
 import { Cta } from "../../components/Cta";
 import { PageHero } from "../../components/PageHero";
@@ -141,6 +142,38 @@ export default function LearnPage() {
           <Reveal className="mt-14 flex flex-col gap-4 sm:flex-row">
             <Cta href="#curriculum" variant="outline">VIEW THE FULL CURRICULUM</Cta>
             <Cta href={ENROLL_HREF}>ENROLL NOW</Cta>
+          </Reveal>
+        </div>
+      </section>
+
+      <section id="certification" className="py-24 lg:py-32">
+        <div className="container-x grid items-center gap-14 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
+          <Reveal>
+            <Photo
+              src="/yb-smart-certification-digital-credential.png"
+              alt="YB University Certificate of Completion on a laptop and the digital certificate on a phone, resting on a yacht deck"
+              quality={90}
+              sizes="(min-width: 1024px) 40rem, 100vw"
+              className="aspect-[3/2] w-full"
+            />
+          </Reveal>
+          <Reveal delay={120}>
+            <p className="eyebrow">YB UNIVERSITY SMART CERTIFICATION</p>
+            <h2 className="h-display mt-5 text-4xl sm:text-5xl lg:text-6xl">
+              Finish the course. Carry the proof.
+            </h2>
+            <p className="lead mt-8 text-navy-900/75">
+              Students who complete and pass Yacht Brokerage Professional Foundations receive a digital certificate of completion: a formal record that they finished and passed the course.
+            </p>
+            <p className="lead mt-5 text-navy-900/75">
+              It can be verified online, shared, and added to a LinkedIn profile. It also connects you to the Palm Beach Yachts ecosystem, which includes YB University and the Peanut Island Boat Club.
+            </p>
+            <p className="mt-8 border-t border-navy-900/15 pt-6 text-sm leading-relaxed text-navy-900/60">
+              The certificate is an educational credential issued by YB University.{" "}
+              <Link href="/credential-disclaimer" className="underline underline-offset-4 hover:text-navy-900">
+                Read what it is and what it is not.
+              </Link>
+            </p>
           </Reveal>
         </div>
       </section>
