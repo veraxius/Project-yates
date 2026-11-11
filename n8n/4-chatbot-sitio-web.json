@@ -1,0 +1,393 @@
+{
+  "name": "YB · 4 · Chatbot: chat del sitio (SalesIQ o widget propio)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## FLUJO 4 · Chatbot: chat del sitio (SalesIQ o widget propio)\n\nEs la entrada del chat. Comprueba la clave, entiende el mensaje, llama al flujo 3 y responde. Si hace falta una persona, avisa al flujo 2. Corrige TRISIAN 6.\n\nSirve **a la vez** para el chat de **Zoho SalesIQ** (el formato que esperaba TRISIAN 6) y para un **widget propio**: detecta cuál es por la forma del mensaje.\n\n**No está probado en tu n8n ni con SalesIQ.** El código de los nodos \"Code\" sí se probó aparte.\n\n### Antes de activarlo\n1. Variables: `YB_CHAT_KEY` (clave larga y aleatoria, mínimo 16 caracteres; **si falta o es corta, nadie entra**), `YB_RAG_URL` (Production URL del flujo 3) y `YB_CHAT_LEAD_URL` (Production URL del flujo 2). Opcional: `YB_SITE_URL`.\n2. Activa el flujo y copia su **Production URL**.\n3. **SalesIQ:** en el bot, apunta el webhook a esa URL añadiendo `?key=` seguido de `YB_CHAT_KEY` (SalesIQ no siempre deja poner encabezados). **Widget propio:** envía el encabezado `X-Webhook-Secret` desde tu servidor, nunca desde el navegador.\n\n### Qué cambió respecto a TRISIAN 6\n- Webhook protegido con clave (antes abierto).\n- Ya no pega el texto del visitante dentro de un JSON: una comilla ya no rompe el chat.\n- **Ya no envía el email ni la pregunta a Google Analytics** (Google prohíbe datos personales).\n- Ya no manda a WholeBranding: avisa al flujo 2.\n- Un mismo chat solo genera **un aviso cada 6 horas** (antes, uno por mensaje, y duplicado con TRISIAN 1).\n- Si la consulta falla, responde con un mensaje y **no** escala (una caída no debe llenar de avisos al equipo).\n\n### Importante: la seguridad de la web\nSi el chat es SalesIQ, la web necesita cargar su script, y la política de seguridad actual (`script-src 'self'`, `frame-src 'none'`) **lo bloquea**. Habría que ampliarla, y es una decisión de seguridad. Un widget propio no la necesita.",
+        "height": 1380,
+        "width": 700,
+        "color": 4
+      },
+      "id": "c0000000-0000-4000-8000-000000000099",
+      "name": "LEE ESTO PRIMERO",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "yb-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c0000000-0000-4000-8000-000000000001",
+      "name": "Chat del sitio",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "c0000000-0000-4000-8000-0000000000aa"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Primer paso del chat del sitio: comprueba la clave y entiende el mensaje.\n// Sirve a dos tipos de llamada:\n//  - Zoho SalesIQ: manda \"visitor\", \"active_conversation_id\" y un \"message\" con texto\n//  - un widget propio: manda { question, email, name, page, sessionId }\n//\n// La clave puede venir en el encabezado X-Webhook-Secret o en la dirección como\n// ?key=... (SalesIQ no siempre permite encabezados). Si YB_CHAT_KEY no existe o es\n// corta, NADIE entra: ante la duda, se rechaza.\nconst raw = $input.first().json;\nconst b = raw.body ?? raw;\nconst query = raw.query || {};\nconst headers = raw.headers || {};\n\nlet expected = '';\ntry {\n  expected = String($vars.YB_CHAT_KEY || '');\n} catch (e) {\n  expected = '';\n}\nconst given = String(headers['x-webhook-secret'] || query.key || '').trim();\n\n// Comparación que tarda lo mismo acierte o falle, para no filtrar la clave por tiempos.\nconst safeEqual = (a, c) => {\n  let diff = a.length ^ c.length;\n  const len = Math.max(a.length, c.length);\n  for (let i = 0; i < len; i++) diff |= (a.charCodeAt(i) || 0) ^ (c.charCodeAt(i) || 0);\n  return diff === 0;\n};\nconst authorized = expected.length >= 16 && safeEqual(given, expected);\nif (!authorized) return [{ json: { authorized: false } }];\n\nconst clip = (value, max) =>\n  String(value ?? '').replace(/[\\u0000-\\u0008\\u000b-\\u001f\\u007f]+/g, ' ').trim().slice(0, max);\nconst EMAIL = /^[^\\s@]{1,64}@[^\\s@]{1,255}\\.[^\\s@]{2,}$/;\n\nconst visitor = b.visitor && typeof b.visitor === 'object' ? b.visitor : {};\nconst message = b.message;\nconst channel = b.visitor || b.active_conversation_id || (message && typeof message === 'object') ? 'salesiq' : 'web';\n\nlet q = b.question;\nif (q === undefined || q === null || q === '') {\n  q = Array.isArray(message) ? message : message && typeof message === 'object' ? message.text : message;\n}\nif (Array.isArray(q)) q = q.join(' ');\nif (q && typeof q === 'object') q = q.text || '';\n// Espacios y saltos de línea reducidos a un solo espacio.\nconst question = clip(q, 1000).replace(/\\s+/g, ' ');\n\nlet email = clip(b.email || visitor.email_id || visitor.email, 254).toLowerCase();\nif (!EMAIL.test(email)) email = '';\n// Si la persona escribe su email en el mensaje, se aprovecha.\nif (!email) {\n  const found = question.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/);\n  if (found && EMAIL.test(found[0].toLowerCase())) email = found[0].toLowerCase();\n}\n\nconst visitorName = [visitor.first_name, visitor.last_name].filter(Boolean).join(' ') || visitor.name;\nreturn [\n  {\n    json: {\n      authorized: true,\n      skip: question.length < 2,\n      channel,\n      question,\n      email,\n      name: clip(b.name || visitorName, 100),\n      page: clip(b.page || b.current_page_url || visitor.current_page_url, 200),\n      sessionId: clip(b.sessionId || b.active_conversation_id || visitor.id || b.uuid, 100),\n    },\n  },\n];\n"
+      },
+      "id": "c0000000-0000-4000-8000-000000000002",
+      "name": "Validar y preparar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c0000000-0000-4000-8000-000000000050",
+              "leftValue": "={{ $json.authorized }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "c0000000-0000-4000-8000-000000000003",
+      "name": "¿Autorizado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'unauthorized' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "c0000000-0000-4000-8000-000000000004",
+      "name": "Rechazar",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c0000000-0000-4000-8000-000000000051",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "c0000000-0000-4000-8000-000000000005",
+      "name": "¿Mensaje vacío?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mensaje de bienvenida cuando llega un mensaje vacío (SalesIQ lo envía al abrir el chat).\nconst ctx = $input.first().json;\nconst text = 'Welcome to YB University! How can I help you today?';\n\nconst reply = ctx.channel === 'salesiq' ? { action: 'reply', replies: [{ text }] } : { answer: text, escalationNeeded: false };\nreturn [{ json: { reply, escalate: false } }];\n"
+      },
+      "id": "c0000000-0000-4000-8000-000000000006",
+      "name": "Bienvenida",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.YB_RAG_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "={{ $vars.YB_CHAT_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ question: $json.question, email: $json.email, name: $json.name, page: $json.page, sessionId: $json.sessionId }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "c0000000-0000-4000-8000-000000000007",
+      "name": "Consultar al chatbot (flujo 3)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        960,
+        40
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Arma la respuesta para quien chatea y decide si hay que avisar a una persona.\nconst cfg = (name, fallback) => {\n  try {\n    return $vars[name] || fallback;\n  } catch (e) {\n    return fallback;\n  }\n};\nconst SITE = String(cfg('YB_SITE_URL', 'https://project-yates-production.up.railway.app')).replace(/\\/$/, '');\nconst ONE_ESCALATION_PER_CHAT_HOURS = 6;\nconst MAX_REMEMBERED_CHATS = 2000;\n\nconst ctx = $('Validar y preparar').first().json;\nconst rag = $input.first().json || {};\n\n// Si el flujo de consulta falló o no devolvió texto, se pide contactar al equipo.\n// Un fallo técnico NO escala: llenaría al equipo de avisos durante una caída.\nconst failed = !rag.answer || rag.error;\nconst answer = failed\n  ? `Sorry, I'm having trouble answering right now. You can reach our team at ${SITE}/contact.`\n  : String(rag.answer).trim();\nlet escalate = !failed && rag.escalationNeeded === true;\n\n// Un mismo chat no debe generar un aviso por cada mensaje.\nconst store = $getWorkflowStaticData('global');\nif (!store.escalated) store.escalated = {};\nconst now = Date.now();\nfor (const key of Object.keys(store.escalated)) {\n  if (now - store.escalated[key] > ONE_ESCALATION_PER_CHAT_HOURS * 3600 * 1000) delete store.escalated[key];\n}\nconst chatKey = ctx.sessionId || ctx.email;\nif (escalate && chatKey) {\n  if (store.escalated[chatKey]) {\n    escalate = false;\n  } else {\n    if (Object.keys(store.escalated).length >= MAX_REMEMBERED_CHATS) {\n      const oldest = Object.entries(store.escalated).sort((a, c) => a[1] - c[1])[0];\n      if (oldest) delete store.escalated[oldest[0]];\n    }\n    store.escalated[chatKey] = now;\n  }\n}\n\nconst reply = ctx.channel === 'salesiq'\n  ? { action: 'reply', replies: [{ text: answer }] }\n  : { answer, escalationNeeded: rag.escalationNeeded === true };\n\nreturn [\n  {\n    json: {\n      reply,\n      escalate,\n      escalation: {\n        email: ctx.email,\n        name: ctx.name,\n        question: ctx.question,\n        reason: rag.escalationReason || '',\n        page: ctx.page,\n        sessionId: ctx.sessionId,\n      },\n    },\n  },\n];\n"
+      },
+      "id": "c0000000-0000-4000-8000-000000000008",
+      "name": "Armar respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.reply }}",
+        "options": {}
+      },
+      "id": "c0000000-0000-4000-8000-000000000009",
+      "name": "Responder al visitante",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c0000000-0000-4000-8000-000000000052",
+              "leftValue": "={{ $json.escalate === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "c0000000-0000-4000-8000-000000000010",
+      "name": "¿Pasar a una persona?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1680,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.YB_CHAT_LEAD_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "={{ $vars.YB_CHAT_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.escalation) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "c0000000-0000-4000-8000-000000000011",
+      "name": "Avisar a una persona (flujo 2)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1920,
+        -160
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Chat del sitio": {
+      "main": [
+        [
+          {
+            "node": "Validar y preparar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar y preparar": {
+      "main": [
+        [
+          {
+            "node": "¿Autorizado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Autorizado?": {
+      "main": [
+        [
+          {
+            "node": "¿Mensaje vacío?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rechazar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Mensaje vacío?": {
+      "main": [
+        [
+          {
+            "node": "Bienvenida",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Consultar al chatbot (flujo 3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bienvenida": {
+      "main": [
+        [
+          {
+            "node": "Responder al visitante",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar al chatbot (flujo 3)": {
+      "main": [
+        [
+          {
+            "node": "Armar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar respuesta": {
+      "main": [
+        [
+          {
+            "node": "Responder al visitante",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder al visitante": {
+      "main": [
+        [
+          {
+            "node": "¿Pasar a una persona?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Pasar a una persona?": {
+      "main": [
+        [
+          {
+            "node": "Avisar a una persona (flujo 2)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

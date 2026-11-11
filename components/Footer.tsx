@@ -5,7 +5,7 @@ import { footerColumns } from "../lib/site";
 export function Footer() {
   return (
     <footer className="bg-navy-950 text-white">
-      <div className="container-x grid gap-14 py-20 lg:grid-cols-[1.2fr_2fr]">
+      <div className="container-x grid gap-14 py-20 lg:grid-cols-[1fr_2.6fr]">
         <div>
           <Image
             src="/yb-university-logo-horizontal-white.png"
@@ -19,7 +19,7 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
           {footerColumns.map((col) => (
             <div key={col.title}>
               <h2 className="eyebrow !text-sand">{col.title}</h2>

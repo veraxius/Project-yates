@@ -13,10 +13,13 @@ const isDev = process.env.NODE_ENV === "development";
 // inline <script> tags (the React payload) into statically generated pages. The
 // alternative (per-request nonces) forces every page to be rendered on each
 // visit and would turn off static generation and caching, so it is not used.
-// What keeps that acceptable: this site has no API routes, no forms and no
-// accounts (enrollment, payment and sign-in all happen on LearnWorlds), so no
-// visitor input is ever written into a page. If that changes (a contact form,
-// a search box, anything that shows input back), revisit this policy.
+// What keeps that acceptable: no visitor input is ever written into a page.
+// There are no accounts (enrollment, payment and sign-in happen on LearnWorlds)
+// and the only input the site accepts, the landing-page forms and the chat, is
+// sent to /api/leads and /api/chat and passed on to n8n. What the visitor types is
+// never written into a page by the server (the chat shows it as plain text through
+// React, which escapes it). If that changes (a search box, comments, anything that
+// writes input back as HTML), revisit this policy.
 //
 // If you later add a third-party service, extend the matching directive:
 //   Stripe.js / embedded checkout -> script-src, frame-src, connect-src https://js.stripe.com / https://api.stripe.com

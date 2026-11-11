@@ -1,0 +1,230 @@
+{
+  "name": "YB · 1 · Formularios de las landing pages → Zoho CRM y correos",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## FLUJO 1 · Formularios de las landing pages → Zoho CRM y correos\n\nRecibe cada formulario de la web (/discover, /reinvent, /entrepreneurs, /creators, /campus y /discovery-pass), guarda **un solo Lead por email** en Zoho con su etiqueta de segmento, y envía los correos.\n\n**No está probado en tu n8n ni con tu Zoho.** El código de los nodos \"Code\" sí se probó aparte; las llamadas a Zoho y Gmail no. Haz un envío de prueba antes de darlo por bueno.\n\n### Antes de activarlo\n1. Credencial **Header Auth**: nombre `X-Webhook-Secret`, valor una clave larga y aleatoria. Elígela en *Formulario de la web*.\n2. Credencial **Zoho OAuth2 API** en los 3 nodos de Zoho. Si tu Zoho no es de EE. UU., cambia `zohoapis.com` por el de tu región.\n3. Credencial **Gmail OAuth2** en *Enviar correos*. **El correo sale desde esa cuenta**: elige la que debe ver el cliente.\n4. En **Variables** de n8n: `YB_SITE_URL` (dirección de la web) y `YB_TEAM_EMAIL` (quién recibe el aviso de cada formulario; sin ella no se envía ese aviso).\n5. En Zoho (módulo **Leads**) crea los campos de una línea que lista LEEME.md y comprueba que el nombre de API coincide.\n6. Activa el flujo, copia la **Production URL** de *Formulario de la web* y ponla en Railway: `N8N_LEADS_WEBHOOK_URL` (esa URL) y `N8N_LEADS_WEBHOOK_SECRET` (la clave del paso 1).\n\n### Cómo funciona\n- Si Zoho rechaza el contacto, el flujo **falla a propósito** y la web le pide a la persona que reintente. Nunca dice \"guardado\" sin haber guardado.\n- Responde a la web **antes** de enviar correos: un fallo de Gmail no afecta a la persona.\n- Cada contacto recibe la etiqueta de su segmento sin borrar las anteriores.\n- *Description* en Zoho guarda las respuestas del **último** envío; el correo al equipo conserva el detalle de cada uno.\n- No se envía *Lead Source*: Zoho puede rechazar valores que no estén en su lista.\n\n### Correos\n- A la persona, según el formulario. **Son borradores sin aprobar**: confirman la recepción y no prometen empleo, ingresos, licencias ni acceso a yates.\n- Al equipo: un resumen con todo lo que escribió la persona.\n- **Protección contra abuso:** alguien podría escribir el email de otra persona. A una misma dirección se le envía como máximo un correo cada 24 h y hay un tope diario (200 a personas, 100 al equipo). Los contadores solo funcionan con el flujo **activo**.",
+        "height": 1380,
+        "width": 700,
+        "color": 4
+      },
+      "id": "f0000000-0000-4000-8000-000000000099",
+      "name": "LEE ESTO PRIMERO",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "yb-leads",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f0000000-0000-4000-8000-000000000001",
+      "name": "Formulario de la web",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "f0000000-0000-4000-8000-0000000000aa"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convierte el formulario (ya validado por la web) en un Lead de Zoho.\nconst item = $input.first().json;\nconst b = item.body ?? item;\n\n// Zoho rechaza los textos de una línea de más de 255 caracteres.\nconst clip = (value, max = 250) => String(value ?? '').trim().slice(0, max);\n\nconst email = clip(b.email, 254).toLowerCase();\nif (!email) throw new Error('El formulario llegó sin email');\n\nconst full = clip(b.name || b.first_name, 100);\nconst parts = full.split(/\\s+/).filter(Boolean);\n// Zoho exige apellido (Last_Name). Si solo hay un nombre, va ahí.\nconst last = parts.length > 1 ? parts[parts.length - 1] : parts[0] || 'Sin nombre';\nconst first = parts.length > 1 ? parts.slice(0, -1).join(' ') : '';\n\nconst answers = b.answers && typeof b.answers === 'object' ? b.answers : {};\n// Respuestas propias de cada formulario, una por línea. Guarda el ÚLTIMO envío:\n// el correo al equipo conserva el detalle de cada uno.\nconst description = Object.entries(answers)\n  .map(([key, value]) => key + ': ' + (Array.isArray(value) ? value.join(', ') : value))\n  .join('\\n')\n  .slice(0, 5000);\n\nconst record = {\n  First_Name: first,\n  Last_Name: last,\n  Email: email,\n  Mobile: clip(answers.mobile, 30),\n  Description: description,\n  // Campos personalizados del módulo Leads (ver LEEME.md).\n  YB_Segment: clip(b.segment),\n  YB_Event: clip(b.event),\n  Landing_Page: clip(b.landing_page),\n  Primary_Interest: clip(b.primary_interest),\n  Secondary_Interests: clip((b.secondary_interests || []).join(', ')),\n  UTM_Source: clip(b.utm_source),\n  UTM_Medium: clip(b.utm_medium),\n  UTM_Campaign: clip(b.utm_campaign),\n  UTM_Content: clip(b.utm_content),\n  Referral_Code: clip(b.referral_code),\n  Consent_Status: clip(b.consent_status),\n  Last_Submission_Id: clip(b.submission_id),\n  Last_Submitted_At: clip(b.submitted_at),\n};\n\n// No enviar campos vacíos: así un segundo envío no borra datos anteriores.\nfor (const key of Object.keys(record)) {\n  if (record[key] === '' || record[key] === undefined || record[key] === null) delete record[key];\n}\n\nreturn [{ json: { record, segment: clip(b.segment), lead: { ...b, email } } }];\n"
+      },
+      "id": "f0000000-0000-4000-8000-000000000002",
+      "name": "Preparar contacto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.zohoapis.com/crm/v3/Leads/upsert",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zohoOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ data: [ $json.record ], duplicate_check_fields: ['Email'] }) }}",
+        "options": {}
+      },
+      "id": "f0000000-0000-4000-8000-000000000003",
+      "name": "Zoho: crear o actualizar Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Zoho responde 200/202 aunque rechace el registro (por ejemplo un campo que no\n// existe). Sin esta comprobación el flujo diría \"guardado\" sin haber guardado nada.\n// Si falla, el flujo termina con error y la web le pide a la persona que reintente.\nconst response = $input.first().json;\nconst result = Array.isArray(response.data) ? response.data[0] : null;\n\nif (!result || result.status !== 'success' || !result.details || !result.details.id) {\n  const why = result ? [result.code, result.message].filter(Boolean).join(' · ') : 'respuesta vacía';\n  throw new Error('Zoho no guardó el contacto: ' + why);\n}\n\nreturn [{ json: { id: result.details.id, action: result.action || '' } }];\n"
+      },
+      "id": "f0000000-0000-4000-8000-000000000004",
+      "name": "Verificar respuesta de Zoho",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.zohoapis.com/crm/v2/Leads/actions/add_tags?ids={{ $json.id }}&tag_names={{ encodeURIComponent($('Preparar contacto').first().json.segment) }}&over_write=false",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zohoOAuth2Api",
+        "options": {}
+      },
+      "id": "f0000000-0000-4000-8000-000000000005",
+      "name": "Zoho: añadir etiqueta del segmento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        960,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true } }}",
+        "options": {}
+      },
+      "id": "f0000000-0000-4000-8000-000000000006",
+      "name": "Responder a la web",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Decide qué correos salen y los arma. Se ejecuta DESPUÉS de responder a la web,\n// así un fallo de correo nunca afecta a la persona que envió el formulario.\n//\n// Ajustes: se leen de las Variables de n8n (YB_SITE_URL y YB_TEAM_EMAIL) o, si no\n// existen, de los valores de abajo.\nconst cfg = (name, fallback) => {\n  try {\n    return $vars[name] || fallback;\n  } catch (e) {\n    return fallback;\n  }\n};\nconst SITE = String(cfg('YB_SITE_URL', 'https://project-yates-production.up.railway.app')).replace(/\\/$/, '');\nconst TEAM = String(cfg('YB_TEAM_EMAIL', '')).trim();\n\n// Protección contra abuso. Cualquiera puede escribir en un formulario el email de\n// OTRA persona, y entonces le llegaría un correo nuestro. Por eso:\n//  - a una misma dirección se le envía como máximo un correo cada 24 horas\n//  - hay un tope diario de correos, por debajo del límite de Gmail\n// Estos contadores viven en los datos del flujo: solo funcionan con el flujo\n// ACTIVO (no en las pruebas manuales del editor).\nconst ONE_PER_ADDRESS_HOURS = 24;\nconst VISITOR_EMAILS_PER_DAY = 200;\nconst TEAM_EMAILS_PER_DAY = 100;\n\nconst NAVY = '#031f3c';\nconst SAND = '#b8a27a';\nconst IVORY = '#f6f3ec';\n\nconst lead = $('Preparar contacto').first().json.lead || {};\nconst answers = lead.answers && typeof lead.answers === 'object' ? lead.answers : {};\n\n// Todo lo que escribió la persona se escapa antes de ir dentro de un correo HTML.\nconst esc = (value) =>\n  String(value ?? '').replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\nconst oneLine = (value) => String(value ?? '').replace(/[\\r\\n\\u0000-\\u001f]+/g, ' ').trim();\n\nconst first = esc(oneLine(lead.first_name || lead.name) || 'there');\nconst host = SITE.replace(/^https?:\\/\\//, '');\n\nconst p = (html) =>\n  `<p style=\"margin:0 0 16px 0;font-size:15px;line-height:1.7;color:#1f2d3d\">${html}</p>`;\nconst small = (html) =>\n  `<p style=\"margin:0 0 16px 0;font-size:12px;line-height:1.6;color:#5b6772\">${html}</p>`;\nconst list = (items) =>\n  `<ul style=\"margin:0 0 16px 0;padding-left:20px;font-size:15px;line-height:1.7;color:#1f2d3d\">${items\n    .map((html) => `<li style=\"margin:0 0 6px 0\">${html}</li>`)\n    .join('')}</ul>`;\nconst link = (label, path) => `<a href=\"${SITE}${path}\" style=\"color:${NAVY}\">${esc(label)}</a>`;\n\nconst footer = small(\n  `You are receiving this email because you sent a request at ${esc(host)}. We use your details to respond to it. ` +\n    `<a href=\"${SITE}/privacy\" style=\"color:#5b6772\">Privacy Policy</a>. ` +\n    `If you did not make this request, you can ignore this message.`,\n);\n\nconst shell = (heading, inner) => `<!doctype html><html><body style=\"margin:0;padding:0;background:${IVORY}\">\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:${IVORY};padding:32px 0\"><tr><td align=\"center\">\n<table width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:560px;width:100%;background:#ffffff;border:1px solid #e4dfd3\">\n<tr><td style=\"background:${NAVY};padding:28px 36px\">\n<p style=\"margin:0;font-family:Arial,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:${SAND}\">YB University</p>\n<h1 style=\"margin:10px 0 0 0;font-family:Georgia,serif;font-weight:normal;font-size:26px;line-height:1.2;color:#ffffff\">${esc(heading)}</h1>\n</td></tr>\n<tr><td style=\"padding:32px 36px 8px 36px;font-family:Arial,sans-serif\">${inner}</td></tr>\n<tr><td style=\"padding:0 36px 28px 36px;font-family:Arial,sans-serif\"><div style=\"height:1px;background:#e4dfd3;margin-bottom:16px\"></div>${footer}</td></tr>\n<tr><td style=\"background:${SAND};height:4px;font-size:0;line-height:0\">&nbsp;</td></tr>\n</table></td></tr></table></body></html>`;\n\nconst explore = list([link('Read the questions people ask most', '/faq'), link('See what the YB Learn program covers', '/learn')]);\n\nconst INTEREST_LABELS = {\n  discovery_days: 'YB Discovery Days',\n  step_aboard: 'YB Step Aboard',\n  creator_challenge: 'YB Campus Creator Challenge',\n  business_challenge: 'YB Business Challenge',\n};\n\n// BORRADOR: textos pendientes de aprobación del cliente. No prometen empleo,\n// ingresos, licencias, acceso a yates ni nada que el documento no confirme. Lo que\n// reciba cada persona del Discovery Pass sigue sin definirse, por eso estos\n// correos solo confirman la recepción y dicen que se enviarán los siguientes pasos.\nconst TEMPLATES = {\n  discovery_pass_registration: () => ({\n    subject: 'Your YB Discovery Pass request',\n    heading: 'Welcome to YB University',\n    body:\n      p(`Hi ${first},`) +\n      p('Thanks for requesting your YB Discovery Pass. We have your details and will be in touch with next steps.') +\n      p('In the meantime:') +\n      explore +\n      p('You don&#39;t need to know anything about yachts. You just need to be curious.'),\n  }),\n\n  program_inquiry: () => ({\n    subject: 'We received your inquiry about YB University',\n    heading: 'Your next chapter',\n    body:\n      p(`Hi ${first},`) +\n      p('Thank you for your interest in YB University. We have your details and a member of our team will follow up with next steps.') +\n      p('You don&#39;t have to make a career decision today. If you would like to look around in the meantime:') +\n      explore +\n      p('You are not starting over. You are bringing everything you&#39;ve learned into something new.'),\n  }),\n\n  business_inquiry: () => ({\n    subject: 'We received your inquiry about the business of yachting',\n    heading: 'Learn the business',\n    body:\n      p(`Hi ${first},`) +\n      p('Thank you for your interest in YB University. We have your details and a member of our team will follow up with next steps.') +\n      p('In the meantime:') +\n      explore +\n      p('Before you build a business in an unfamiliar industry, learn how that industry works.'),\n  }),\n\n  creator_application: () => ({\n    subject: 'Your YB Creators Collective application',\n    heading: 'Application received',\n    body:\n      p(`Hi ${first},`) +\n      p('Thank you for applying to the YB Creators Collective. We review every application and will contact you about next steps.') +\n      small(\n        'Applying does not guarantee selection. Participation, vessel access, project assignments and any compensation are defined separately, and creator work and usage rights require a separate agreement.',\n      ),\n  }),\n\n  campus_crew_registration: () => {\n    const picked = (Array.isArray(answers.interests) ? answers.interests : [])\n      .map((id) => INTEREST_LABELS[id])\n      .filter(Boolean);\n    return {\n      subject: 'Welcome to the YB Campus Crew',\n      heading: 'You are on the list',\n      body:\n        p(`Hi ${first},`) +\n        p('Thanks for registering with the YB Campus Crew. We will let you know about upcoming campus activities.') +\n        (picked.length ? p('You told us you are interested in:') + list(picked.map(esc)) : '') +\n        (answers.ambassador === true\n          ? p('We also noted your interest in becoming a Campus Crew Ambassador.')\n          : ''),\n    };\n  },\n};\n\nconst EVENT_LABELS = {\n  discovery_pass_registration: 'Discovery Pass registration',\n  program_inquiry: 'Program inquiry',\n  business_inquiry: 'Business inquiry',\n  creator_application: 'Creator application',\n  campus_crew_registration: 'Campus Crew registration',\n};\n\n// ----- contadores (datos del flujo) -----\nconst store = $getWorkflowStaticData('global');\nconst now = Date.now();\nconst today = new Date(now).toISOString().slice(0, 10);\nif (!store.visitorSent) store.visitorSent = {};\nif (!store.day || store.day.date !== today) store.day = { date: today, visitor: 0, team: 0 };\nfor (const address of Object.keys(store.visitorSent)) {\n  if (now - store.visitorSent[address] > ONE_PER_ADDRESS_HOURS * 3600 * 1000) delete store.visitorSent[address];\n}\n\nconst out = [];\nlet visitorNote = 'Correo a la persona: enviado.';\nconst template = TEMPLATES[lead.event];\n\nif (!lead.email || !template) {\n  visitorNote = 'Correo a la persona: no aplica para este tipo de formulario.';\n} else if (store.visitorSent[lead.email]) {\n  visitorNote = 'Correo a la persona: NO enviado, esta dirección ya recibió uno en las últimas 24 horas.';\n} else if (store.day.visitor >= VISITOR_EMAILS_PER_DAY) {\n  visitorNote = `Correo a la persona: NO enviado, se alcanzó el tope diario (${VISITOR_EMAILS_PER_DAY}).`;\n} else {\n  const t = template();\n  store.visitorSent[lead.email] = now;\n  store.day.visitor += 1;\n  out.push({ json: { to: lead.email, subject: t.subject, html: shell(t.heading, t.body) } });\n}\n\n// ----- aviso al equipo -----\nif (TEAM && store.day.team < TEAM_EMAILS_PER_DAY) {\n  store.day.team += 1;\n  const label = EVENT_LABELS[lead.event] || oneLine(lead.event) || 'Form';\n  const rows = [\n    ['Name', oneLine(lead.name || lead.first_name)],\n    ['Email', lead.email],\n    ['Type', label],\n    ['Landing page', lead.landing_page],\n    ['Segment', lead.segment],\n    ['Primary interest', lead.primary_interest],\n    ['Secondary interests', (lead.secondary_interests || []).join(', ')],\n    ['Program updates consent', lead.consent_status],\n    ['utm_source', lead.utm_source],\n    ['utm_medium', lead.utm_medium],\n    ['utm_campaign', lead.utm_campaign],\n    ['utm_content', lead.utm_content],\n    ['Referral code', lead.referral_code],\n    ...Object.entries(answers).map(([key, value]) => [key, Array.isArray(value) ? value.join(', ') : String(value)]),\n    ['Submission', `${oneLine(lead.submission_id)} · ${oneLine(lead.submitted_at)}`],\n  ].filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== '');\n\n  const table = `<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0 0 16px 0\">${rows\n    .map(\n      ([key, value]) =>\n        `<tr><td style=\"padding:8px 12px 8px 0;border-bottom:1px solid #efeadf;width:170px;vertical-align:top;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8a7448\">${esc(key)}</td>` +\n        `<td style=\"padding:8px 0;border-bottom:1px solid #efeadf;vertical-align:top;font-size:14px;line-height:1.6;color:#1f2d3d;white-space:pre-line\">${esc(value)}</td></tr>`,\n    )\n    .join('')}</table>`;\n\n  const subjectName = oneLine(lead.name || lead.first_name || lead.email).slice(0, 80);\n  out.push({\n    json: {\n      to: TEAM,\n      subject: `[YB] ${label}: ${subjectName}`,\n      html: shell(`New ${label.toLowerCase()}`, table + small(esc(visitorNote))),\n    },\n  });\n}\n\nreturn out;\n"
+      },
+      "id": "f0000000-0000-4000-8000-000000000007",
+      "name": "Decidir y armar correos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "f0000000-0000-4000-8000-000000000008",
+      "name": "Enviar correos",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Formulario de la web": {
+      "main": [
+        [
+          {
+            "node": "Preparar contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar contacto": {
+      "main": [
+        [
+          {
+            "node": "Zoho: crear o actualizar Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoho: crear o actualizar Lead": {
+      "main": [
+        [
+          {
+            "node": "Verificar respuesta de Zoho",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar respuesta de Zoho": {
+      "main": [
+        [
+          {
+            "node": "Zoho: añadir etiqueta del segmento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoho: añadir etiqueta del segmento": {
+      "main": [
+        [
+          {
+            "node": "Responder a la web",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder a la web": {
+      "main": [
+        [
+          {
+            "node": "Decidir y armar correos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir y armar correos": {
+      "main": [
+        [
+          {
+            "node": "Enviar correos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

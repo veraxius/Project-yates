@@ -10,6 +10,17 @@ export function allowIndexing(): boolean {
   return process.env.ROBOTS_ALLOW_INDEX === "true";
 }
 
+/**
+ * Whether the chatbot is connected: both N8N_CHAT_URL and N8N_CHAT_KEY must be
+ * set. The "Ask us" button always shows; when this is false its window says the
+ * assistant is almost ready instead of offering a message box. The layout reads
+ * this when the site is built, so after adding or changing the variables the site
+ * has to be redeployed (Railway does it on its own).
+ */
+export function chatEnabled(): boolean {
+  return Boolean(process.env.N8N_CHAT_URL && process.env.N8N_CHAT_KEY);
+}
+
 /** The public address of the site (NEXT_PUBLIC_SITE_URL), without a trailing slash, or null if not set. */
 export function publicSiteUrl(): string | null {
   const url = process.env.NEXT_PUBLIC_SITE_URL;

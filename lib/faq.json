@@ -1,0 +1,408 @@
+[
+  {
+    "id": "faq-01",
+    "category": "Getting Started",
+    "question": "What exactly is YB University?",
+    "answer": "YB University is a professional learning initiative within the Palm Beach Yacht Sales ecosystem. It introduces yacht brokerage through industry education, practical exercises, and pathways for further exploration.",
+    "featured": true
+  },
+  {
+    "id": "faq-02",
+    "category": "Getting Started",
+    "question": "Who is YB University for?",
+    "answer": "For students, career explorers, working professionals, creators, and entrepreneurs interested in understanding the yachting industry. You do not need an established marine-industry background to begin.",
+    "featured": true
+  },
+  {
+    "id": "faq-03",
+    "category": "Getting Started",
+    "question": "Do I need previous boating or yacht sales experience?",
+    "answer": "No. Yacht Brokerage Professional Foundations is designed to start with core terminology, vessel knowledge, professional roles, and brokerage processes.",
+    "featured": true
+  },
+  {
+    "id": "faq-04",
+    "category": "Getting Started",
+    "question": "Do I need a college degree?",
+    "answer": "No college degree is required for the proposed introductory course. Specific jobs, licenses, and professional activities may have separate qualifications.",
+    "featured": false
+  },
+  {
+    "id": "faq-05",
+    "category": "Getting Started",
+    "question": "Do I need to own a yacht or know wealthy people?",
+    "answer": "No. Learning yacht brokerage does not require yacht ownership or an existing network. Industry knowledge, professionalism, and relationships can be developed over time.",
+    "featured": true
+  },
+  {
+    "id": "faq-06",
+    "category": "Getting Started",
+    "question": "Is there a minimum age to participate?",
+    "answer": "The primary program is intended for adults. Any offering for minors would require separately published eligibility, parental permissions, and safeguards.",
+    "featured": false
+  },
+  {
+    "id": "faq-07",
+    "category": "Getting Started",
+    "question": "Can international students participate?",
+    "answer": "Online participation may be possible from eligible locations, subject to program availability and applicable restrictions. The course does not grant immigration status, work authorization, or a professional license.",
+    "featured": false
+  },
+  {
+    "id": "faq-08",
+    "category": "The Industry",
+    "question": "What does a yacht broker actually do?",
+    "answer": "A yacht broker assists clients buying and selling yachts. Work may include vessel research, marketing, showings, offers, negotiations, surveys, and coordination with other professionals.",
+    "featured": true
+  },
+  {
+    "id": "faq-09",
+    "category": "The Industry",
+    "question": "Is yacht brokerage only about selling luxury yachts?",
+    "answer": "No. The industry spans different vessel categories and price ranges. The wider marine ecosystem also includes operations, technology, hospitality, marketing, and services.",
+    "featured": false
+  },
+  {
+    "id": "faq-10",
+    "category": "The Industry",
+    "question": "Is yacht brokerage a realistic career opportunity?",
+    "answer": "It can be a professional path for qualified, persistent people, but outcomes depend on market conditions, experience, licensing, and individual effort. No job or income is guaranteed.",
+    "featured": true
+  },
+  {
+    "id": "faq-11",
+    "category": "The Industry",
+    "question": "Do yacht brokers earn commissions?",
+    "answer": "Many brokers receive transaction-based commissions. Compensation, brokerage splits, expenses, taxes, and timing vary. Gross commission is not the same as personal take-home income.",
+    "featured": true
+  },
+  {
+    "id": "faq-12",
+    "category": "The Industry",
+    "question": "Can I work in yachting without becoming a broker?",
+    "answer": "Yes. Related roles include marketing, digital media, sales support, client service, marina operations, technology, administration, and marine services. Qualifications vary by role.",
+    "featured": true
+  },
+  {
+    "id": "faq-13",
+    "category": "The Industry",
+    "question": "Is the yacht industry difficult to enter?",
+    "answer": "Entry can be challenging without industry knowledge or contacts. The program is designed to explain professional expectations and help learners identify practical next steps, not remove every barrier.",
+    "featured": false
+  },
+  {
+    "id": "faq-14",
+    "category": "The Industry",
+    "question": "Is technology and AI changing yacht brokerage?",
+    "answer": "Digital listings, CRM systems, analytics, marketing tools, and AI-assisted workflows are changing many business processes. Human judgment, privacy, and accountability remain essential.",
+    "featured": false
+  },
+  {
+    "id": "faq-15",
+    "category": "The Learning Experience",
+    "question": "What will I actually learn?",
+    "answer": "The proposed 16-module Yacht Brokerage Professional Foundations curriculum covers vessel basics, industry participants, listings, client journeys, negotiation, compliance awareness, co-brokerage, marketing, and professional practice.",
+    "featured": true
+  },
+  {
+    "id": "faq-16",
+    "category": "The Learning Experience",
+    "question": "Is the program entirely online?",
+    "answer": "The foundational course is designed for online delivery. Optional in-person activities may be offered separately, subject to scheduling, permissions, location, and eligibility.",
+    "featured": false
+  },
+  {
+    "id": "faq-17",
+    "category": "The Learning Experience",
+    "question": "Can I study while working or attending college?",
+    "answer": "The proposed online format supports flexible learning. Final access periods, deadlines, and scheduled requirements will be published before enrollment.",
+    "featured": true
+  },
+  {
+    "id": "faq-18",
+    "category": "The Learning Experience",
+    "question": "How long does the course take?",
+    "answer": "The curriculum contains 16 proposed modules. Confirmed study hours, access duration, and completion deadlines will be listed on the program page before purchase.",
+    "featured": false
+  },
+  {
+    "id": "faq-19",
+    "category": "The Learning Experience",
+    "question": "Will I learn from real industry professionals?",
+    "answer": "The program is designed around practical industry knowledge and may include expert contributions. Confirmed instructors, credentials, and guest sessions will be named on the official course page.",
+    "featured": false
+  },
+  {
+    "id": "faq-20",
+    "category": "The Learning Experience",
+    "question": "Is it just a collection of videos?",
+    "answer": "No. The proposed learning design combines lessons with examples, downloadable resources, scenarios, exercises, knowledge checks, and assessments.",
+    "featured": true
+  },
+  {
+    "id": "faq-21",
+    "category": "The Learning Experience",
+    "question": "Will I learn to use modern professional tools?",
+    "answer": "The curriculum introduces CRM, digital marketing, business productivity, and responsible AI concepts. Any specific software access or demonstrations will be identified in the syllabus.",
+    "featured": false
+  },
+  {
+    "id": "faq-22",
+    "category": "The Learning Experience",
+    "question": "What if I struggle with a module?",
+    "answer": "The proposed course includes structured resources and opportunities to revisit concepts. The availability and response times of instructor support will be stated in the program support policy.",
+    "featured": false
+  },
+  {
+    "id": "faq-23",
+    "category": "The Learning Experience",
+    "question": "Will I need special equipment?",
+    "answer": "For online learning, plan for reliable internet and a compatible computer or mobile device. Any additional requirements for events or exercises will be disclosed in advance.",
+    "featured": false
+  },
+  {
+    "id": "faq-24",
+    "category": "Costs & Enrollment",
+    "question": "How much does YB University cost?",
+    "answer": "Current tuition, what is included, and any required fees will be displayed before checkout. Do not rely on an estimate until official pricing is published.",
+    "featured": true
+  },
+  {
+    "id": "faq-25",
+    "category": "Costs & Enrollment",
+    "question": "Are payment plans available?",
+    "answer": "If installment options are offered, their schedule, conditions, and total cost will appear at checkout. Availability is not yet confirmed.",
+    "featured": false
+  },
+  {
+    "id": "faq-26",
+    "category": "Costs & Enrollment",
+    "question": "Are scholarships or student discounts available?",
+    "answer": "Scholarships, student pricing, and financial assistance are being explored. Only officially announced offers should be considered available.",
+    "featured": false
+  },
+  {
+    "id": "faq-27",
+    "category": "Costs & Enrollment",
+    "question": "Are there any hidden fees?",
+    "answer": "Mandatory charges should be disclosed before purchase. Optional experiences, travel, professional licensing, and third-party services may cost extra.",
+    "featured": false
+  },
+  {
+    "id": "faq-28",
+    "category": "Costs & Enrollment",
+    "question": "Can I try the program before enrolling?",
+    "answer": "Any sample lessons or previews will be identified on the website if available. Review the published syllabus, learning outcomes, and terms before enrolling.",
+    "featured": false
+  },
+  {
+    "id": "faq-29",
+    "category": "Costs & Enrollment",
+    "question": "What is the refund policy?",
+    "answer": "Refund eligibility will be governed by the published policy shown before checkout. Review the applicable deadlines, conditions, and contact process.",
+    "featured": false
+  },
+  {
+    "id": "faq-30",
+    "category": "Costs & Enrollment",
+    "question": "How long will I have access to the course?",
+    "answer": "The access period will be published on the program page. Course access, downloadable materials, community participation, and optional services may have different terms.",
+    "featured": false
+  },
+  {
+    "id": "faq-31",
+    "category": "Certification & Careers",
+    "question": "Will I receive a certificate after completing the program?",
+    "answer": "The proposed flagship program includes a completion credential for learners who meet its published assessment requirements. The final credential name and verification method will be confirmed before launch.",
+    "featured": true
+  },
+  {
+    "id": "faq-32",
+    "category": "Certification & Careers",
+    "question": "Will this certificate make me a licensed yacht broker?",
+    "answer": "No. A course-completion certificate is not a government-issued brokerage license. Legal requirements vary by jurisdiction and the activities performed.",
+    "featured": true
+  },
+  {
+    "id": "faq-33",
+    "category": "Certification & Careers",
+    "question": "Can I become a yacht broker in Florida after the course?",
+    "answer": "Course completion alone does not authorize regulated yacht brokerage activities in Florida. Determine applicable licensing requirements and exemptions under Florida law before practicing.",
+    "featured": false
+  },
+  {
+    "id": "faq-34",
+    "category": "Certification & Careers",
+    "question": "Does YB University guarantee employment?",
+    "answer": "No. Course completion does not guarantee a job, internship, interview, clients, or earnings. Opportunities depend on qualifications, availability, and independent selection.",
+    "featured": true
+  },
+  {
+    "id": "faq-35",
+    "category": "Certification & Careers",
+    "question": "Will YB University connect me with industry professionals?",
+    "answer": "The proposed YB Network may include events, mentorship, and professional engagement. Specific introductions or mentors cannot be guaranteed unless confirmed.",
+    "featured": false
+  },
+  {
+    "id": "faq-36",
+    "category": "Certification & Careers",
+    "question": "Can I work with Palm Beach Yacht Sales?",
+    "answer": "Separately announced projects or roles may become available to eligible applicants. Enrollment does not establish employment, contractor status, or a brokerage affiliation.",
+    "featured": false
+  },
+  {
+    "id": "faq-37",
+    "category": "Certification & Careers",
+    "question": "Can I build my own yacht brokerage business?",
+    "answer": "Potentially, if you satisfy the relevant licensing, legal, financial, and operational requirements. The course introduces industry fundamentals but does not replace professional advice or experience.",
+    "featured": false
+  },
+  {
+    "id": "faq-38",
+    "category": "Real-World Experiences",
+    "question": "Will I get to step aboard a real yacht?",
+    "answer": "YB EXPERIENCE is developing eligible yacht familiarization visits and marina activities. They depend on vessel availability, owner permission, safety, location, and scheduling; participation is not guaranteed.",
+    "featured": true
+  },
+  {
+    "id": "faq-39",
+    "category": "Real-World Experiences",
+    "question": "Are yacht visits included in the course price?",
+    "answer": "Not automatically. Optional activities may require separate registration, eligibility, and payment. Each event should clearly state what is included.",
+    "featured": false
+  },
+  {
+    "id": "faq-40",
+    "category": "Real-World Experiences",
+    "question": "Do I need boating experience to join an event?",
+    "answer": "Some introductory events may not require prior boating experience. Each activity will state safety instructions, eligibility, and any physical or age-related requirements.",
+    "featured": false
+  },
+  {
+    "id": "faq-41",
+    "category": "Real-World Experiences",
+    "question": "Can I meet yacht owners, brokers, and other professionals?",
+    "answer": "Selected events may include industry speakers or networking. Attendance by any particular person is only confirmed when explicitly announced.",
+    "featured": false
+  },
+  {
+    "id": "faq-42",
+    "category": "Real-World Experiences",
+    "question": "What is the YB Yacht Challenge?",
+    "answer": "The proposed YB Yacht Challenge uses practical assignments such as vessel research, listing analysis, marketing concepts, and client scenarios. Formats and eligibility will be announced when available.",
+    "featured": false
+  },
+  {
+    "id": "faq-43",
+    "category": "Real-World Experiences",
+    "question": "Can I participate if I live outside South Florida?",
+    "answer": "The online course is designed for remote learning where enrollment is available. Some optional in-person activities may require travel at your own expense.",
+    "featured": false
+  },
+  {
+    "id": "faq-44",
+    "category": "Creators & Students",
+    "question": "I am a college student. Why should I consider YB University?",
+    "answer": "The program can complement studies in business, marketing, hospitality, communications, design, and technology with knowledge of a specialized industry. It does not automatically confer academic credit.",
+    "featured": true
+  },
+  {
+    "id": "faq-45",
+    "category": "Creators & Students",
+    "question": "Can I participate while attending college full-time?",
+    "answer": "The proposed online course is intended to fit around other responsibilities. Optional events and projects may have fixed schedules.",
+    "featured": false
+  },
+  {
+    "id": "faq-46",
+    "category": "Creators & Students",
+    "question": "Does YB University offer internships?",
+    "answer": "A student opportunities framework is being developed. Any internships will be announced separately with clear requirements, supervision, duration, and compensation terms.",
+    "featured": false
+  },
+  {
+    "id": "faq-47",
+    "category": "Creators & Students",
+    "question": "I am a content creator. How could yacht knowledge help me?",
+    "answer": "Industry knowledge can support more informed content about marine lifestyle, vessel design, technology, ownership, and travel, helping you explore a specialized editorial niche.",
+    "featured": true
+  },
+  {
+    "id": "faq-48",
+    "category": "Creators & Students",
+    "question": "Can I create content during yacht visits?",
+    "answer": "Only with appropriate permission. Filming, photography, drone use, publication, and commercial use may require consent from vessel owners, operators, marinas, and participants.",
+    "featured": false
+  },
+  {
+    "id": "faq-49",
+    "category": "Creators & Students",
+    "question": "Can I collaborate with YB University as a creator?",
+    "answer": "Potential collaborations may be evaluated based on audience relevance, professionalism, content quality, and available projects. No partnership or paid assignment is guaranteed.",
+    "featured": false
+  },
+  {
+    "id": "faq-50",
+    "category": "Creators & Students",
+    "question": "Can I use the program to launch a side business?",
+    "answer": "You can explore marine-related service opportunities, subject to your skills and applicable laws. Course participation does not guarantee clients or revenue.",
+    "featured": false
+  },
+  {
+    "id": "faq-51",
+    "category": "Creators & Students",
+    "question": "Can my existing professional skills transfer into yachting?",
+    "answer": "Often. Sales, customer service, design, marketing, hospitality, technology, and project management can be relevant to different marine-industry roles.",
+    "featured": false
+  },
+  {
+    "id": "faq-52",
+    "category": "Trust & Support",
+    "question": "Is YB University an accredited university?",
+    "answer": "YB University is a professional education brand, not an accredited degree-granting university. Do not interpret its courses as college credit, accredited degrees, or government-issued licenses unless separately verified and expressly stated.",
+    "featured": true
+  },
+  {
+    "id": "faq-53",
+    "category": "Trust & Support",
+    "question": "Who is behind YB University?",
+    "answer": "YB University is being developed within the Palm Beach Yacht Sales business ecosystem. Confirmed leadership, instructors, and professional credentials should be identified on the official website.",
+    "featured": false
+  },
+  {
+    "id": "faq-54",
+    "category": "Trust & Support",
+    "question": "Is YB University affiliated with Palm Beach Yacht Sales?",
+    "answer": "Yes. It is part of the Palm Beach Yacht Sales ecosystem. Education and any professional recruitment or project opportunities are separate activities with their own terms.",
+    "featured": false
+  },
+  {
+    "id": "faq-55",
+    "category": "Trust & Support",
+    "question": "Will I learn about ethics and client protection?",
+    "answer": "The proposed curriculum includes professional communication, transparency, legal awareness, client relationships, and responsible business conduct.",
+    "featured": false
+  },
+  {
+    "id": "faq-56",
+    "category": "Trust & Support",
+    "question": "How will my personal information be handled?",
+    "answer": "The published Privacy Policy will explain data collection, use, service providers, retention, and applicable privacy rights. Review that policy before submitting information.",
+    "featured": false
+  },
+  {
+    "id": "faq-57",
+    "category": "Trust & Support",
+    "question": "Can I speak with someone before enrolling?",
+    "answer": "Use the official website contact channel to ask about programs, eligibility, pricing, or experiences. Available support channels and response times should be published.",
+    "featured": false
+  },
+  {
+    "id": "faq-58",
+    "category": "Trust & Support",
+    "question": "What happens after I finish?",
+    "answer": "You may continue learning, build a portfolio, investigate licensing, participate in available community activities, or apply for separately announced opportunities. Your next step depends on your goals and eligibility.",
+    "featured": true
+  }
+]

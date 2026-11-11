@@ -1,0 +1,283 @@
+{
+  "name": "YB · 2 · Chatbot → contacto en Zoho CRM y aviso al equipo",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## FLUJO 2 · Chatbot → contacto en Zoho y aviso al equipo\n\nCuando el chatbot decide que una conversación necesita a una persona, el flujo 4 llama a este. Crea o actualiza el contacto en Zoho (solo si el visitante dejó un email válido) y avisa al equipo por correo.\n\n**No está probado en tu n8n ni con tu Zoho.**\n\n### Antes de activarlo\n1. Credencial **Header Auth**: nombre `X-Webhook-Secret` y como valor **la misma clave que la Variable `YB_CHAT_KEY`**. Elígela en *Aviso del chatbot*.\n2. Credencial **Zoho OAuth2 API** en los 2 nodos de Zoho y **Gmail OAuth2** en *Avisar al equipo*.\n3. Variable `YB_TEAM_EMAIL`. Sin ella no se envía el correo.\n4. En Zoho (Leads) deben existir los campos YB Event, Landing Page, Last Submission Id y Last Submitted At.\n5. Activa el flujo y copia su **Production URL** en la Variable `YB_CHAT_LEAD_URL` (la usa el flujo 4).\n\n### Qué recibe (JSON)\n`{ \"email\": \"...\", \"name\": \"...\", \"question\": \"...\", \"reason\": \"...\", \"page\": \"...\", \"sessionId\": \"...\" }`\nSolo `question` es obligatoria.\n\n### Cómo funciona\n- **Con email válido:** upsert por email (sin duplicados), etiqueta YB_CHATBOT y aviso al equipo.\n- **Sin email:** no se crea contacto (no hay a quién responder) y solo se avisa al equipo.\n- No se escribe a la persona que chatea.\n- Tope de 100 avisos al día; solo funciona con el flujo **activo**.",
+        "height": 1000,
+        "width": 660,
+        "color": 4
+      },
+      "id": "a0000000-0000-4000-8000-000000000099",
+      "name": "LEE ESTO PRIMERO",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "yb-chat-lead",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a0000000-0000-4000-8000-000000000001",
+      "name": "Aviso del chatbot",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "a0000000-0000-4000-8000-0000000000aa"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepara el aviso que manda el chatbot cuando una conversación necesita a una persona.\n// Lo que llega viene de un visitante: se limpia y se recorta antes de usarlo.\nconst raw = $input.first().json;\nconst b = raw.body ?? raw;\n\nconst clip = (value, max) => String(value ?? '').replace(/[\\u0000-\\u0008\\u000b-\\u001f\\u007f]+/g, ' ').trim().slice(0, max);\n\nconst question = clip(b.question || b.message, 1000);\nif (!question) throw new Error('El aviso llegó sin la pregunta del visitante');\n\nconst email = clip(b.email, 254).toLowerCase();\nconst hasEmail = /^[^\\s@]{1,64}@[^\\s@]{1,255}\\.[^\\s@]{2,}$/.test(email);\n\nconst name = clip(b.name, 100);\nconst parts = name.split(/\\s+/).filter(Boolean);\nconst last = parts.length > 1 ? parts[parts.length - 1] : parts[0] || 'Chatbot visitor';\nconst first = parts.length > 1 ? parts.slice(0, -1).join(' ') : '';\n\nconst reason = clip(b.reason || b.escalationReason, 300);\nconst page = clip(b.page, 200);\nconst session = clip(b.sessionId, 100);\nconst now = new Date().toISOString();\n\n// Sin un email válido no hay a quién responder: no se crea ningún contacto en\n// Zoho (se evitan registros basura) y solo se avisa al equipo.\nlet record = null;\nif (hasEmail) {\n  record = {\n    First_Name: first,\n    Last_Name: last,\n    Email: email,\n    Description: `Chatbot question: ${question}\\nReason for escalation: ${reason || 'not given'}\\nPage: ${page || 'not given'}`.slice(0, 5000),\n    YB_Event: 'chat_escalation',\n    Landing_Page: page,\n    Last_Submission_Id: session,\n    Last_Submitted_At: now,\n  };\n  for (const key of Object.keys(record)) {\n    if (record[key] === '' || record[key] === undefined) delete record[key];\n  }\n}\n\nreturn [{ json: { hasEmail, record, chat: { email: hasEmail ? email : '', name, question, reason, page, session, at: now } } }];\n"
+      },
+      "id": "a0000000-0000-4000-8000-000000000002",
+      "name": "Preparar aviso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a0000000-0000-4000-8000-000000000050",
+              "leftValue": "={{ $json.hasEmail }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "a0000000-0000-4000-8000-000000000003",
+      "name": "¿Dejó un email válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.zohoapis.com/crm/v3/Leads/upsert",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zohoOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ data: [ $json.record ], duplicate_check_fields: ['Email'] }) }}",
+        "options": {}
+      },
+      "id": "a0000000-0000-4000-8000-000000000004",
+      "name": "Zoho: crear o actualizar Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        720,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Zoho responde 200/202 aunque rechace el registro (por ejemplo un campo que no\n// existe). Sin esta comprobación el flujo diría \"guardado\" sin haber guardado nada.\n// Si falla, el flujo termina con error y la web le pide a la persona que reintente.\nconst response = $input.first().json;\nconst result = Array.isArray(response.data) ? response.data[0] : null;\n\nif (!result || result.status !== 'success' || !result.details || !result.details.id) {\n  const why = result ? [result.code, result.message].filter(Boolean).join(' · ') : 'respuesta vacía';\n  throw new Error('Zoho no guardó el contacto: ' + why);\n}\n\nreturn [{ json: { id: result.details.id, action: result.action || '' } }];\n"
+      },
+      "id": "a0000000-0000-4000-8000-000000000005",
+      "name": "Verificar respuesta de Zoho",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.zohoapis.com/crm/v2/Leads/actions/add_tags?ids={{ $json.id }}&tag_names={{ encodeURIComponent('YB_CHATBOT') }}&over_write=false",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zohoOAuth2Api",
+        "options": {}
+      },
+      "id": "a0000000-0000-4000-8000-000000000006",
+      "name": "Zoho: etiqueta YB_CHATBOT",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1200,
+        -120
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true } }}",
+        "options": {}
+      },
+      "id": "a0000000-0000-4000-8000-000000000007",
+      "name": "Responder al chatbot",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Arma el correo al equipo cuando el chatbot pasa una conversación a una persona.\n// Se ejecuta DESPUÉS de responder al chatbot. No se escribe a la persona que chatea:\n// ya está en la conversación y su email podría no ser suyo.\nconst cfg = (name, fallback) => {\n  try {\n    return $vars[name] || fallback;\n  } catch (e) {\n    return fallback;\n  }\n};\nconst TEAM = String(cfg('YB_TEAM_EMAIL', '')).trim();\nconst TEAM_EMAILS_PER_DAY = 100;\n\nconst NAVY = '#031f3c';\nconst SAND = '#b8a27a';\nconst IVORY = '#f6f3ec';\n\nconst prepared = $('Preparar aviso').first().json;\nconst chat = prepared.chat || {};\n\nconst esc = (value) =>\n  String(value ?? '').replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\nconst oneLine = (value) => String(value ?? '').replace(/[\\r\\n\\u0000-\\u001f]+/g, ' ').trim();\n\nif (!TEAM) return [];\n\nconst store = $getWorkflowStaticData('global');\nconst today = new Date().toISOString().slice(0, 10);\nif (!store.day || store.day.date !== today) store.day = { date: today, visitor: 0, team: 0 };\nif (store.day.team >= TEAM_EMAILS_PER_DAY) return [];\nstore.day.team += 1;\n\nconst note = chat.email\n  ? 'The visitor left an email: the contact was created or updated in Zoho CRM (tag YB_CHATBOT).'\n  : 'The visitor did NOT leave an email, so no contact was created in Zoho CRM and there is nobody to reply to.';\n\nconst rows = [\n  ['Name', chat.name],\n  ['Email', chat.email],\n  ['Question', chat.question],\n  ['Reason', chat.reason],\n  ['Page', chat.page],\n  ['Session', chat.session],\n  ['Time', chat.at],\n].filter(([, value]) => value && String(value).trim() !== '');\n\nconst table = `<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0 0 16px 0\">${rows\n  .map(\n    ([key, value]) =>\n      `<tr><td style=\"padding:8px 12px 8px 0;border-bottom:1px solid #efeadf;width:110px;vertical-align:top;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8a7448\">${esc(key)}</td>` +\n      `<td style=\"padding:8px 0;border-bottom:1px solid #efeadf;vertical-align:top;font-size:14px;line-height:1.6;color:#1f2d3d;white-space:pre-line\">${esc(value)}</td></tr>`,\n  )\n  .join('')}</table>`;\n\nconst html = `<!doctype html><html><body style=\"margin:0;padding:0;background:${IVORY}\">\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:${IVORY};padding:32px 0\"><tr><td align=\"center\">\n<table width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:560px;width:100%;background:#ffffff;border:1px solid #e4dfd3\">\n<tr><td style=\"background:${NAVY};padding:28px 36px\">\n<p style=\"margin:0;font-family:Arial,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:${SAND}\">YB University</p>\n<h1 style=\"margin:10px 0 0 0;font-family:Georgia,serif;font-weight:normal;font-size:26px;line-height:1.2;color:#ffffff\">A chat needs a person</h1>\n</td></tr>\n<tr><td style=\"padding:32px 36px 28px 36px;font-family:Arial,sans-serif\">${table}\n<p style=\"margin:0;font-size:12px;line-height:1.6;color:#5b6772\">${esc(note)}</p></td></tr>\n<tr><td style=\"background:${SAND};height:4px;font-size:0;line-height:0\">&nbsp;</td></tr>\n</table></td></tr></table></body></html>`;\n\nconst who = oneLine(chat.name || chat.email || 'anonymous visitor').slice(0, 80);\nreturn [{ json: { to: TEAM, subject: `[YB chatbot] ${who}`, html } }];\n"
+      },
+      "id": "a0000000-0000-4000-8000-000000000008",
+      "name": "Armar aviso al equipo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "a0000000-0000-4000-8000-000000000009",
+      "name": "Avisar al equipo",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        0
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Aviso del chatbot": {
+      "main": [
+        [
+          {
+            "node": "Preparar aviso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar aviso": {
+      "main": [
+        [
+          {
+            "node": "¿Dejó un email válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Dejó un email válido?": {
+      "main": [
+        [
+          {
+            "node": "Zoho: crear o actualizar Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder al chatbot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoho: crear o actualizar Lead": {
+      "main": [
+        [
+          {
+            "node": "Verificar respuesta de Zoho",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar respuesta de Zoho": {
+      "main": [
+        [
+          {
+            "node": "Zoho: etiqueta YB_CHATBOT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoho: etiqueta YB_CHATBOT": {
+      "main": [
+        [
+          {
+            "node": "Responder al chatbot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder al chatbot": {
+      "main": [
+        [
+          {
+            "node": "Armar aviso al equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar aviso al equipo": {
+      "main": [
+        [
+          {
+            "node": "Avisar al equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -27,7 +27,9 @@ export default function PrivacyPage() {
             "Payment data: handled by Stripe. We receive confirmation that you paid and your name and email, not your card number.",
             "Learning data: progress, assessment results, assignments and credential status, held in our learning platform.",
             "Portfolio and application data: work you submit and information you provide when you apply for projects, mentorship or other opportunities.",
+            "Registration and inquiry data: what you tell us in our registration, inquiry and application forms (for example your interests, professional background, college or content niche), whether you agreed to receive program updates, and the campaign link that brought you to the site.",
             "Messages: what you send us when you contact us.",
+            "Chat data: the messages you type into the website assistant and a random identifier of your browser tab. The assistant is automated: please do not share passwords, payment details or other sensitive information in it.",
             "Technical data: basic information such as IP address and browser type, used for security and to keep the service running.",
           ],
         },
@@ -38,13 +40,14 @@ export default function PrivacyPage() {
             "To deliver the program, assess your work and issue the educational credential.",
             "To review applications for selected projects and opportunities.",
             "To send service emails (confirmation, access, password help) and answer your questions.",
+            "To respond to your registration, inquiry or application and, only if you agreed, to send you program updates. You can unsubscribe at any time.",
             "To protect the site against fraud and abuse and to meet legal obligations.",
           ],
         },
         {
           heading: "Who we share it with",
           paragraphs: [
-            "We use service providers who process data on our behalf: Stripe (payments), LearnWorlds (learning platform), [EMAIL / AUTOMATION PROVIDER, e.g. n8n and email service], and our hosting and security providers (Railway, Cloudflare). [LEGAL REVIEW REQUIRED: confirm the final list, add Palm Beach Yachts if data is shared with it, and describe international transfers.]",
+            "We use service providers who process data on our behalf: Stripe (payments), LearnWorlds (learning platform), [CRM PROVIDER, e.g. Zoho CRM], [EMAIL / AUTOMATION PROVIDER, e.g. n8n and email service], [AI PROVIDER FOR THE WEBSITE ASSISTANT, e.g. OpenAI], and our hosting and security providers (Railway, Cloudflare). [LEGAL REVIEW REQUIRED: confirm the final list, add Palm Beach Yachts if data is shared with it, and describe international transfers.]",
           ],
         },
         {
@@ -62,7 +65,7 @@ export default function PrivacyPage() {
         {
           heading: "Cookies",
           paragraphs: [
-            "This website does not set tracking cookies at the moment. Our learning platform uses cookies to keep you signed in. [LEGAL REVIEW REQUIRED: update if analytics or advertising tools are added.]",
+            "This website does not set tracking cookies at the moment. The chat keeps a random identifier in your browser tab's session storage, which disappears when you close the tab. Our learning platform uses cookies to keep you signed in. [LEGAL REVIEW REQUIRED: update if analytics or advertising tools are added.]",
           ],
         },
         {

@@ -30,6 +30,20 @@ export const footerColumns = [
     ],
   },
   {
+    // The campaign landing pages (lib/landing-paths.ts). They are written for ads,
+    // QR codes and referrals, and this column is the only place on the site that
+    // links to them. They are not in the main menu on purpose.
+    title: "FIND YOUR PATH",
+    links: [
+      { label: "Discover a New Career", href: "/discover" },
+      { label: "Reinvent Your Career", href: "/reinvent" },
+      { label: "For Entrepreneurs", href: "/entrepreneurs" },
+      { label: "Creators Collective", href: "/creators" },
+      { label: "Campus Experience", href: "/campus" },
+      { label: "Free Discovery Pass", href: "/discovery-pass" },
+    ],
+  },
+  {
     title: "ABOUT",
     links: [
       { label: "About YB University", href: "/about" },

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+import { ChatWidget } from "../components/chat/ChatWidget";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
-import { allowIndexing } from "../lib/site-env";
+import { SiteChrome } from "../components/SiteChrome";
+import { allowIndexing, chatEnabled } from "../lib/site-env";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,9 +35,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${cormorant.variable} h-full`}>
       <body className="flex min-h-full flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <SiteChrome header={<Header />} footer={<Footer />} chat={<ChatWidget ready={chatEnabled()} />}>
+          {children}
+        </SiteChrome>
       </body>
     </html>
   );

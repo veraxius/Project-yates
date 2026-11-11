@@ -1,0 +1,314 @@
+{
+  "name": "YB · 6 · LearnWorlds → etapa del contacto en Zoho CRM",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## FLUJO 6 · LearnWorlds → etapa del contacto en Zoho CRM (MODO APRENDIZAJE)\n\nCuando un alumno se inscribe, compra o completa el curso en LearnWorlds, actualiza su etapa en Zoho: **Enrolled** o **Completed**.\n\n**LearnWorlds no publica el formato exacto de sus eventos, y yo no lo he visto.** Por eso este flujo busca el email y el tipo de evento donde suelen venir y **solo toca Zoho si reconoce las dos cosas**. Lo que no entiende te llega por correo con el detalle, para ajustarlo. No está probado.\n\n### Antes de activarlo\n1. Credencial **Zoho OAuth2 API** (nodos de Zoho) y **Gmail OAuth2** (*Enviar aviso*). Variable `YB_TEAM_EMAIL`.\n2. En Zoho (Leads), crea los campos de una línea **YB Lifecycle** y **Lifecycle Updated At**. En YB Lifecycle pon como **valor predeterminado \"Lead\"**: así cada formulario nuevo empieza en Lead y este flujo lo sube.\n3. Activa el flujo y copia su **Production URL**. **Esa dirección es la clave:** no la compartas. Ya trae un código largo al final.\n4. En LearnWorlds: ajustes de la escuela → webhooks, pega esa URL y marca los eventos de inscripción, compra y curso completado.\n5. Usa **enviar prueba** de LearnWorlds y mira el correo que llega: trae el formato real.\n\n### Cómo funciona\n- Reconoce el tipo por palabras (\"enrol\", \"purchase\", \"complet\"...). \"Pago completado\" cuenta como **Enrolled**, no como Completed. Las bajas y los reembolsos no cambian la etapa.\n- Si el contacto **ya existe**, solo cambia la etapa: no toca nombre ni apellido. Si no existe, lo crea con el nombre de LearnWorlds.\n- Responde 200 a LearnWorlds al instante.\n- **Modo aprendizaje:** mientras `LEARNING_MODE` sea true en *Reconocer evento*, recibes también el detalle de los 10 primeros eventos del día. Cuando el formato esté confirmado, ponlo en false.\n\n### Límites\n- No distingue el orden de los eventos: si LearnWorlds reintenta un \"inscrito\" después de un \"completado\", la etapa baja.\n- No hay etapa \"Active Learner\": cada lección completada sería una escritura en Zoho.\n- No verifica la firma del webhook, porque no sé si tu plan la incluye.",
+        "height": 1280,
+        "width": 700,
+        "color": 4
+      },
+      "id": "d0000000-0000-4000-8000-000000000099",
+      "name": "LEE ESTO PRIMERO",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "yb-lw-f0da05ca31694405358f5ca96b828fa6",
+        "options": {}
+      },
+      "id": "d0000000-0000-4000-8000-000000000001",
+      "name": "Evento de LearnWorlds",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "d0000000-0000-4000-8000-0000000000aa"
+    },
+    {
+      "parameters": {
+        "jsCode": "// MODO APRENDIZAJE. LearnWorlds no publica el formato exacto de sus eventos, así\n// que este nodo busca el email, el nombre y el tipo de evento en los lugares\n// donde suelen venir, y solo cambia la etapa en Zoho si reconoce las dos cosas.\n// Lo que no reconoce NO toca Zoho: se envía por correo al equipo para que se vea\n// el formato real y se ajuste este nodo.\n//\n// Mientras LEARNING_MODE sea true, el equipo recibe también el detalle de los\n// primeros eventos del día aunque se hayan reconocido. Cuando el formato esté\n// confirmado, ponlo en false.\nconst LEARNING_MODE = true;\nconst LEARNING_EMAILS_PER_DAY = 10;\nconst UNRECOGNIZED_EMAILS_PER_DAY = 20;\n\nconst raw = $input.first().json;\nconst b = raw.body ?? raw;\n\nconst get = (object, path) =>\n  path.split('.').reduce((o, key) => (o && typeof o === 'object' ? o[key] : undefined), object);\nconst pick = (paths) => {\n  for (const path of paths) {\n    const value = get(b, path);\n    if (value !== undefined && value !== null && String(value).trim() !== '') return String(value).trim();\n  }\n  return '';\n};\nconst clip = (value, max) =>\n  String(value ?? '').replace(/[\\u0000-\\u0008\\u000b-\\u001f\\u007f]+/g, ' ').trim().slice(0, max);\n\nconst EMAIL = /^[^\\s@]{1,64}@[^\\s@]{1,255}\\.[^\\s@]{2,}$/;\nconst email = clip(\n  pick(['data.user.email', 'user.email', 'data.student.email', 'data.learner.email', 'data.userEmail', 'data.email', 'email']),\n  254,\n).toLowerCase();\nconst eventType = clip(pick(['type', 'event', 'event_type', 'eventType', 'trigger', 'data.type', 'name']), 120);\n\nlet first = clip(pick(['data.user.first_name', 'data.user.firstName', 'user.first_name', 'data.first_name', 'first_name']), 100);\nlet last = clip(pick(['data.user.last_name', 'data.user.lastName', 'user.last_name', 'data.last_name', 'last_name']), 100);\nif (!first && !last) {\n  const full = clip(pick(['data.user.name', 'user.name', 'data.name', 'name']), 100);\n  const parts = full.split(/\\s+/).filter(Boolean);\n  if (parts.length > 1) {\n    first = parts.slice(0, -1).join(' ');\n    last = parts[parts.length - 1];\n  } else if (parts.length === 1) {\n    last = parts[0];\n  }\n}\n\n// De evento a etapa del ciclo de vida. El orden importa: las palabras de compra\n// van antes que \"complet\", porque \"pago completado\" no es \"curso completado\".\nconst t = eventType.toLowerCase();\nlet stage = '';\nif (/unenrol|cancel|refund|revok|expire|suspend|chargeback|dispute|delete/.test(t)) stage = '';\nelse if (/purchas|order|payment|paid|subscri|bought|enrol/.test(t)) stage = 'Enrolled';\nelse if (/complet|certificat|graduat/.test(t)) stage = 'Completed';\n\nconst recognized = EMAIL.test(email) && stage !== '';\n\n// ----- contadores del aviso al equipo (datos del flujo; solo con el flujo activo) -----\nconst store = $getWorkflowStaticData('global');\nconst today = new Date().toISOString().slice(0, 10);\nif (!store.lw || store.lw.date !== today) store.lw = { date: today, learning: 0, unrecognized: 0 };\nlet notify = false;\nif (!recognized) {\n  if (store.lw.unrecognized < UNRECOGNIZED_EMAILS_PER_DAY) {\n    store.lw.unrecognized += 1;\n    notify = true;\n  }\n} else if (LEARNING_MODE && store.lw.learning < LEARNING_EMAILS_PER_DAY) {\n  store.lw.learning += 1;\n  notify = true;\n}\n\n// El detalle crudo se recorta y se enmascara: solo sirve para ver el formato.\nlet rawText = '';\ntry {\n  rawText = JSON.stringify(b, null, 2).slice(0, 4000);\n} catch (e) {\n  rawText = String(b).slice(0, 4000);\n}\n\nreturn [\n  {\n    json: {\n      recognized,\n      notify,\n      stage,\n      eventType,\n      email: EMAIL.test(email) ? email : '',\n      first,\n      last,\n      raw: rawText,\n    },\n  },\n];\n"
+      },
+      "id": "d0000000-0000-4000-8000-000000000002",
+      "name": "Reconocer evento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d0000000-0000-4000-8000-000000000050",
+              "leftValue": "={{ $json.recognized }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "d0000000-0000-4000-8000-000000000003",
+      "name": "¿Reconocido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://www.zohoapis.com/crm/v3/Leads/search?email=' + encodeURIComponent($json.email) }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zohoOAuth2Api",
+        "options": {}
+      },
+      "id": "d0000000-0000-4000-8000-000000000004",
+      "name": "Zoho: buscar contacto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        720,
+        -120
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepara la actualización del contacto en Zoho según lo que respondió la búsqueda.\n//  - Si el contacto YA existe: solo se actualiza la etapa. NUNCA se tocan nombre ni\n//    apellido, para no pisar lo que la persona escribió en el formulario.\n//  - Si NO existe (compró sin haber pasado por una landing page): se crea con el\n//    nombre que mande LearnWorlds. Zoho exige apellido.\nconst event = $('Reconocer evento').first().json;\nconst search = $input.first().json || {};\n\nconst found = Array.isArray(search.data) && search.data.length > 0 ? search.data[0] : null;\nconst now = new Date().toISOString();\nconst slug = String(event.eventType || 'event').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 60);\n\nconst record = {\n  Email: event.email,\n  YB_Lifecycle: event.stage,\n  Lifecycle_Updated_At: now,\n  YB_Event: `learnworlds_${slug}`,\n};\n\nif (!found) {\n  record.Last_Name = event.last || event.first || event.email.split('@')[0];\n  if (event.first && event.last) record.First_Name = event.first;\n}\n\nreturn [{ json: { record, existing: Boolean(found) } }];\n"
+      },
+      "id": "d0000000-0000-4000-8000-000000000005",
+      "name": "Preparar actualización",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.zohoapis.com/crm/v3/Leads/upsert",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "zohoOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ data: [ $json.record ], duplicate_check_fields: ['Email'] }) }}",
+        "options": {}
+      },
+      "id": "d0000000-0000-4000-8000-000000000006",
+      "name": "Zoho: guardar etapa",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1200,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Zoho responde 200/202 aunque rechace el registro (por ejemplo un campo que no\n// existe). Sin esta comprobación el flujo diría \"guardado\" sin haber guardado nada.\n// Si falla, el flujo termina con error y la web le pide a la persona que reintente.\nconst response = $input.first().json;\nconst result = Array.isArray(response.data) ? response.data[0] : null;\n\nif (!result || result.status !== 'success' || !result.details || !result.details.id) {\n  const why = result ? [result.code, result.message].filter(Boolean).join(' · ') : 'respuesta vacía';\n  throw new Error('Zoho no guardó el contacto: ' + why);\n}\n\nreturn [{ json: { id: result.details.id, action: result.action || '' } }];\n"
+      },
+      "id": "d0000000-0000-4000-8000-000000000007",
+      "name": "Verificar respuesta de Zoho",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d0000000-0000-4000-8000-000000000051",
+              "leftValue": "={{ $json.notify }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "d0000000-0000-4000-8000-000000000008",
+      "name": "¿Avisar al equipo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Correo al equipo con el detalle de un evento de LearnWorlds, para ver el formato\n// real de lo que se recibe. Todo va escapado: es contenido que llega de fuera.\nconst cfg = (name, fallback) => {\n  try {\n    return $vars[name] || fallback;\n  } catch (e) {\n    return fallback;\n  }\n};\nconst TEAM = String(cfg('YB_TEAM_EMAIL', '')).trim();\nif (!TEAM) return [];\n\nconst NAVY = '#031f3c';\nconst SAND = '#b8a27a';\nconst IVORY = '#f6f3ec';\n\nconst e = $('Reconocer evento').first().json;\nconst esc = (value) =>\n  String(value ?? '').replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\nconst oneLine = (value) => String(value ?? '').replace(/[\\r\\n\\u0000-\\u001f]+/g, ' ').trim();\n\nconst status = e.recognized\n  ? `Recognized: the contact was moved to \"${e.stage}\" in Zoho CRM.`\n  : 'NOT recognized: Zoho CRM was not changed. Either the email or the event type could not be read from this payload.';\n\nconst rows = [\n  ['Event type', e.eventType],\n  ['Email found', e.email],\n  ['Stage', e.stage],\n].filter(([, value]) => value && String(value).trim() !== '');\n\nconst table = `<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0 0 16px 0\">${rows\n  .map(\n    ([key, value]) =>\n      `<tr><td style=\"padding:8px 12px 8px 0;border-bottom:1px solid #efeadf;width:110px;vertical-align:top;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8a7448\">${esc(key)}</td>` +\n      `<td style=\"padding:8px 0;border-bottom:1px solid #efeadf;vertical-align:top;font-size:14px;color:#1f2d3d\">${esc(value)}</td></tr>`,\n  )\n  .join('')}</table>`;\n\nconst html = `<!doctype html><html><body style=\"margin:0;padding:0;background:${IVORY}\">\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:${IVORY};padding:32px 0\"><tr><td align=\"center\">\n<table width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:560px;width:100%;background:#ffffff;border:1px solid #e4dfd3\">\n<tr><td style=\"background:${NAVY};padding:28px 36px\">\n<p style=\"margin:0;font-family:Arial,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:${SAND}\">YB University</p>\n<h1 style=\"margin:10px 0 0 0;font-family:Georgia,serif;font-weight:normal;font-size:26px;line-height:1.2;color:#ffffff\">LearnWorlds event</h1>\n</td></tr>\n<tr><td style=\"padding:32px 36px 28px 36px;font-family:Arial,sans-serif\">\n<p style=\"margin:0 0 16px 0;font-size:14px;line-height:1.6;color:#1f2d3d\">${esc(status)}</p>\n${table}\n<p style=\"margin:0 0 8px 0;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8a7448\">Raw payload (trimmed)</p>\n<pre style=\"margin:0;padding:12px;background:#f6f3ec;font-size:12px;line-height:1.5;color:#1f2d3d;white-space:pre-wrap;word-break:break-word\">${esc(e.raw)}</pre>\n</td></tr>\n<tr><td style=\"background:${SAND};height:4px;font-size:0;line-height:0\">&nbsp;</td></tr>\n</table></td></tr></table></body></html>`;\n\nreturn [{ json: { to: TEAM, subject: `[YB LearnWorlds] ${oneLine(e.eventType || 'unrecognized event').slice(0, 80)}`, html } }];\n"
+      },
+      "id": "d0000000-0000-4000-8000-000000000009",
+      "name": "Armar aviso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "d0000000-0000-4000-8000-000000000010",
+      "name": "Enviar aviso",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        960,
+        160
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Evento de LearnWorlds": {
+      "main": [
+        [
+          {
+            "node": "Reconocer evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reconocer evento": {
+      "main": [
+        [
+          {
+            "node": "¿Reconocido?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "¿Avisar al equipo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Reconocido?": {
+      "main": [
+        [
+          {
+            "node": "Zoho: buscar contacto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Zoho: buscar contacto": {
+      "main": [
+        [
+          {
+            "node": "Preparar actualización",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar actualización": {
+      "main": [
+        [
+          {
+            "node": "Zoho: guardar etapa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zoho: guardar etapa": {
+      "main": [
+        [
+          {
+            "node": "Verificar respuesta de Zoho",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Avisar al equipo?": {
+      "main": [
+        [
+          {
+            "node": "Armar aviso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Armar aviso": {
+      "main": [
+        [
+          {
+            "node": "Enviar aviso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

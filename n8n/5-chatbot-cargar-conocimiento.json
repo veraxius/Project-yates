@@ -1,11 +1,11 @@
 {
-  "name": "YB - 1. Cargar documentos de Google Drive al RAG (Qdrant)",
+  "name": "YB · 5 · Cargar documentos de Google Drive a la base de conocimiento (Qdrant)",
   "nodes": [
     {
       "parameters": {
-        "content": "## FLUJO 1 · Cargar documentos al RAG\n\nLee tu carpeta de Google Drive y guarda el conocimiento en Qdrant. **Se ejecuta primero.**\n\n### Antes de activarlo\n1. Crea las credenciales: **Google Drive OAuth2**, **OpenAI** y **Qdrant API**, y elígelas en los nodos con aviso rojo.\n2. Pega el **ID de tu carpeta de Drive** en estos 3 nodos: *Listar archivos de la carpeta*, *Drive: archivo nuevo* y *Drive: archivo modificado*. El ID es lo que va al final de la dirección: drive.google.com/drive/folders/**ESTE_ES_EL_ID**\n3. En *Preparar archivo* cambia **qdrantUrl** por la dirección de tu Qdrant (sin barra final). Si cambias el nombre de la colección, cámbialo también en *Guardar en Qdrant*.\n\n### Cómo usarlo\n1. Ejecuta **Manual: cargar todo ahora** (carga lo que ya está en la carpeta).\n2. Comprueba en Qdrant que existe la colección **yb_knowledge** con puntos.\n3. Activa el flujo: desde entonces carga solo los archivos nuevos o modificados, cada minuto.\n\n### Ojo\n- Formatos: PDF, Word, texto, CSV y Google Docs/Hojas/Presentaciones.\n- Si **borras** un archivo de Drive, sus trozos siguen en Qdrant.\n- Los vectores (**text-embedding-3-small**) deben ser los mismos que use el flujo 2.\n- Este flujo no está probado en tu n8n: si un nodo pide ajustes, es normal.",
-        "height": 760,
-        "width": 560,
+        "content": "## FLUJO 5 · Cargar documentos de Google Drive a la base de conocimiento (Qdrant)\n\nLee la carpeta de Drive del chatbot y guarda su contenido en Qdrant. Reemplaza a TRISIAN 2. **Se ejecuta antes de que el chatbot sirva para algo.**\n\n**No está probado en tu n8n.**\n\n### Antes de activarlo\n1. Credenciales: **Google Drive OAuth2**, **OpenAI** y **Qdrant API** (esta última, en el nodo *Guardar en Qdrant*, con la URL y la clave de tu Qdrant). Elígelas en los nodos con aviso rojo.\n2. Variables: `YB_DRIVE_FOLDER_ID`, `YB_QDRANT_URL` (sin barra final), `YB_QDRANT_API_KEY` y `YB_QDRANT_COLLECTION`. **No uses las que ya existen de WholeBranding** (QDRANT_URL, QDRANT_COLLECTION): este flujo borra y escribe en la colección.\n3. Pega el **ID de la carpeta de Drive** en los 2 nodos *Drive: archivo nuevo* y *Drive: archivo modificado* (los disparadores no aceptan variables). El ID es lo que va al final de la dirección: drive.google.com/drive/folders/**ESTE_ES_EL_ID**\n\n### Cómo usarlo\n1. **Solo la primera vez:** ejecuta **Manual: crear la colección**. Crea la colección con 3072 dimensiones (el tamaño de text-embedding-3-large) y el índice para borrar por archivo.\n2. Ejecuta **Manual: cargar todo ahora**: carga lo que ya está en la carpeta.\n3. Activa el flujo: desde entonces carga los archivos nuevos o modificados, cada minuto.\n4. En la carpeta sube también los archivos de la carpeta `conocimiento/` de este proyecto (el FAQ y los datos del programa).\n\n### Qué cambió respecto a TRISIAN 2\n- **No hay webhook público.** Antes cualquiera podía escribir en el conocimiento del chatbot.\n- **No duplica:** borra la versión anterior del archivo antes de guardar la nueva.\n- Lee PDF, Word, CSV, texto y Google Docs, Hojas y Presentaciones (antes solo texto plano).\n- La carpeta sale de una Variable, no de la carpeta de WholeBranding.\n- Los nombres de archivo con comillas ya no rompen la carga.\n\n### Ojo\n- Si **borras** un archivo de Drive, sus trozos siguen en Qdrant. Hay que borrarlos a mano.\n- Si el archivo no se puede descargar, la versión anterior ya se borró.\n- El conocimiento **es lo que el chatbot dirá**: sube solo contenido que el cliente haya aprobado. Las respuestas del FAQ sobre precio, pagos, reembolso y acceso todavía dicen \"se publicarán\".",
+        "height": 1000,
+        "width": 640,
         "color": 4
       },
       "id": "e0000000-0000-4000-8000-000000000099",
@@ -36,7 +36,7 @@
         "filter": {
           "folderId": {
             "__rl": true,
-            "value": "PEGA_AQUI_EL_ID_DE_LA_CARPETA",
+            "value": "={{ $vars.YB_DRIVE_FOLDER_ID }}",
             "mode": "id"
           },
           "whatToSearch": "files"
@@ -145,13 +145,13 @@
             {
               "id": "f5",
               "name": "qdrantUrl",
-              "value": "https://PEGA-AQUI-LA-URL-DE-QDRANT:6333",
+              "value": "={{ $vars.YB_QDRANT_URL }}",
               "type": "string"
             },
             {
               "id": "f6",
               "name": "collection",
-              "value": "yb_knowledge",
+              "value": "={{ $vars.YB_QDRANT_COLLECTION }}",
               "type": "string"
             }
           ]
@@ -215,12 +215,19 @@
       "parameters": {
         "method": "POST",
         "url": "={{ $json.qdrantUrl }}/collections/{{ $json.collection }}/points/delete?wait=true",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "qdrantApi",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({ filter: { must: [ { key: 'metadata.file_id', match: { value: $json.id } } ] } }) }}",
-        "options": {}
+        "options": {},
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "={{ $vars.YB_QDRANT_API_KEY }}"
+            }
+          ]
+        }
       },
       "id": "a1000000-0000-4000-8000-000000000008",
       "name": "Borrar versión anterior del archivo",
@@ -266,7 +273,7 @@
         "mode": "insert",
         "qdrantCollection": {
           "__rl": true,
-          "value": "yb_knowledge",
+          "value": "={{ $vars.YB_QDRANT_COLLECTION }}",
           "mode": "id"
         },
         "options": {}
@@ -331,7 +338,7 @@
     },
     {
       "parameters": {
-        "model": "text-embedding-3-small",
+        "model": "text-embedding-3-large",
         "options": {}
       },
       "id": "a1000000-0000-4000-8000-000000000013",
@@ -341,6 +348,71 @@
       "position": [
         1340,
         340
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e0000000-0000-4000-8000-000000000060",
+      "name": "Manual: crear la colección (solo la primera vez)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $vars.YB_QDRANT_URL }}/collections/{{ $vars.YB_QDRANT_COLLECTION }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "={{ $vars.YB_QDRANT_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ vectors: { size: 3072, distance: 'Cosine' } }) }}",
+        "options": {}
+      },
+      "id": "e0000000-0000-4000-8000-000000000061",
+      "name": "Qdrant: crear colección",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        260,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $vars.YB_QDRANT_URL }}/collections/{{ $vars.YB_QDRANT_COLLECTION }}/index?wait=true",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api-key",
+              "value": "={{ $vars.YB_QDRANT_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ field_name: 'metadata.file_id', field_schema: 'keyword' }) }}",
+        "options": {}
+      },
+      "id": "e0000000-0000-4000-8000-000000000062",
+      "name": "Qdrant: índice por archivo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        520,
+        640
       ]
     }
   ],
@@ -468,6 +540,28 @@
           {
             "node": "Guardar en Qdrant",
             "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual: crear la colección (solo la primera vez)": {
+      "main": [
+        [
+          {
+            "node": "Qdrant: crear colección",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant: crear colección": {
+      "main": [
+        [
+          {
+            "node": "Qdrant: índice por archivo",
+            "type": "main",
             "index": 0
           }
         ]
