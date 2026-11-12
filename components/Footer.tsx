@@ -60,11 +60,9 @@ export function Footer() {
           {/* Q&As: kept in the footer for now, but as a clear button so it is easy to spot. */}
           <Link
             href="/faq"
-            className="mt-8 inline-flex min-h-11 items-center gap-3 bg-sand px-6 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-navy-950 transition-colors hover:bg-white"
+            className="mt-8 inline-flex min-h-11 items-center rounded-full bg-sand px-7 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-navy-950 transition-colors hover:bg-white"
           >
-            Q&amp;As
-            <span aria-hidden>→</span>
-            <span className="sr-only">: questions and answers</span>
+            Have questions? Click here
           </Link>
           {socialLinks.some((s) => s.href) && (
             <ul aria-label="Social media" className="mt-8 flex gap-3">
