@@ -1,0 +1,12 @@
+Archivo de prueba para YB University.
+
+Esto es solo para comprobar que el flujo 5 de n8n carga correctamente un documento
+desde Google Drive a Qdrant, y que el chatbot puede encontrarlo y citarlo.
+
+Dato de prueba: el color de la camiseta de prueba de YB University es verde lima.
+
+Si el chatbot responde correctamente a la pregunta "de qué color es la camiseta de
+prueba de YB University", el flujo 5 y el flujo 3 (o 4) están funcionando bien.
+
+Borra este archivo de Google Drive y vuelve a ejecutar el flujo 5 cuando termines la
+prueba, para que el chatbot no responda con este dato inventado a un cliente real.

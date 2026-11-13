@@ -45,7 +45,9 @@ Los archivos `.json` se importan en n8n (menú ⋯ → *Import from file*). Este
 | Variable | Qué es |
 |---|---|
 | `YB_SITE_URL` | Dirección pública de la web. Si falta, usa la de Railway |
-| `YB_TEAM_EMAIL` | Quién recibe los avisos y el resumen. **Si falta, esos correos no se envían** |
+| `YB_LEADS_TEAM_EMAIL` | Quién recibe el aviso de cada formulario (flujo 1). **Una sola dirección.** Si falta, ese aviso no se envía |
+| `YB_TEAM_EMAIL` | Quién recibe el aviso de escalado del chatbot (flujo 2). Admite varias direcciones separadas por coma. Si falta, ese aviso no se envía |
+| `YB_SUMMARY_TEAM_EMAIL` | Quién recibe el resumen semanal (flujo 7). **Una sola dirección.** Si falta, no se envía |
 | `YB_CHAT_KEY` | Clave del chat, larga y aleatoria, **mínimo 16 caracteres**. Si falta o es corta, el flujo 4 no deja entrar a nadie |
 | `YB_RAG_URL` | Production URL del flujo 3 |
 | `YB_CHAT_LEAD_URL` | Production URL del flujo 2 |
