@@ -23,12 +23,13 @@ export const ENROLL_HREF = COURSE_URL;
 // Social accounts shown as icons in the footer. An icon appears only once its
 // address is filled in, so the footer never shows a dead link.
 // TODO(link): the client still has to send the account addresses.
-export const socialLinks: { id: "instagram" | "facebook" | "x" | "linkedin" | "youtube"; label: string; href: string }[] = [
+export const socialLinks: { id: "instagram" | "facebook" | "x" | "linkedin" | "youtube" | "tiktok"; label: string; href: string }[] = [
   { id: "instagram", label: "Instagram", href: "https://www.instagram.com/palm_beach_yachts/" },
   { id: "facebook", label: "Facebook", href: "https://www.facebook.com/yachtbrokeruniversity/" },
   { id: "x", label: "X", href: "https://x.com/PBYachtSales" },
-  { id: "linkedin", label: "LinkedIn", href: "" },
-  { id: "youtube", label: "YouTube", href: "" },
+  { id: "linkedin", label: "LinkedIn", href: "https://linkedin.com/company/yacht-broker-university" },
+  { id: "youtube", label: "YouTube", href: "https://www.youtube.com/@mYBUniversity" },
+  { id: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@yachtbrokeruniversity" },
 ];
 
 // The parts of the Palm Beach Yachts ecosystem, shown in the footer. Until a logo

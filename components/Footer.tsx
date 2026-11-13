@@ -39,6 +39,12 @@ function SocialIcon({ id }: { id: (typeof socialLinks)[number]["id"] }) {
           <path d="m10 9.5 5 2.5-5 2.5Z" fill="currentColor" stroke="none" />
         </svg>
       );
+    case "tiktok":
+      return (
+        <svg width={16} height={16} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <path d="M16.6 2h-3.2v13.4a3.2 3.2 0 1 1-2.27-3.06V8.9A6.4 6.4 0 1 0 16.6 15.2V9.1a7.9 7.9 0 0 0 4.4 1.33V7.1A4.8 4.8 0 0 1 16.6 2Z" />
+        </svg>
+      );
   }
 }
 
