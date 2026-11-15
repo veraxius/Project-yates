@@ -133,7 +133,7 @@ export function Footer() {
                   alt={item.name}
                   width={item.logoWidth ?? 160}
                   height={item.logoHeight ?? 40}
-                  className="h-auto w-36 opacity-90"
+                  className="h-9 w-auto opacity-90"
                 />
               ) : (
                 <span className="text-sm font-semibold uppercase tracking-[0.2em] text-white/80">{item.name}</span>

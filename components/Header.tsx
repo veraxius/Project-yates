@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ENROLL_HREF, nav } from "../lib/site";
+import { ENROLL_HREF, LOGIN_HREF, nav } from "../lib/site";
 
 export function Header() {
   const pathname = usePathname();
@@ -121,6 +121,12 @@ export function Header() {
             className="hidden whitespace-nowrap bg-white px-4 py-3.5 text-[0.68rem] lg:py-3 font-semibold uppercase tracking-[0.16em] text-navy-900 transition-[color,background-color,transform] duration-300 hover:bg-ivory motion-safe:hover:-translate-y-0.5 min-[480px]:inline-block sm:px-6"
           >
             {ctaLabel}
+          </Link>
+          <Link
+            href={LOGIN_HREF}
+            className="hidden whitespace-nowrap bg-[#94b55b] px-4 py-3.5 text-[0.68rem] lg:py-3 font-semibold uppercase tracking-[0.16em] text-navy-900 transition-[filter,transform] duration-300 hover:brightness-110 motion-safe:hover:-translate-y-0.5 min-[480px]:inline-block sm:px-6"
+          >
+            STUDENT LOGIN
           </Link>
           <button
             type="button"

@@ -24,7 +24,7 @@ export const ENROLL_HREF = COURSE_URL;
 // address is filled in, so the footer never shows a dead link.
 // TODO(link): the client still has to send the account addresses.
 export const socialLinks: { id: "instagram" | "facebook" | "x" | "linkedin" | "youtube" | "tiktok"; label: string; href: string }[] = [
-  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/palm_beach_yachts/" },
+  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/yachtbrokeruniversity/" },
   { id: "facebook", label: "Facebook", href: "https://www.facebook.com/yachtbrokeruniversity/" },
   { id: "x", label: "X", href: "https://x.com/PBYachtSales" },
   { id: "linkedin", label: "LinkedIn", href: "https://linkedin.com/company/yacht-broker-university" },
@@ -32,14 +32,17 @@ export const socialLinks: { id: "instagram" | "facebook" | "x" | "linkedin" | "y
   { id: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@yachtbrokeruniversity" },
 ];
 
-// The parts of the Palm Beach Yachts ecosystem, shown in the footer. Until a logo
-// file is added (`logo`: a path in /public, white on transparent) the name is shown
-// as text, and it becomes a link once `href` is filled in.
-// TODO(link): the client still has to send the logo files and the addresses.
+// The Palm Beach Yachts ecosystem, shown in the footer for cross-traffic between
+// its five properties. Order and the exact URLs come from the client's email
+// ("the order of the logos is left to right: YB University, Palm Beach Yachts,
+// Florida Yacht Sales, Peanut Island Yacht Club and Gene Yacht Wizard").
+// Each logo file is white on transparent, in /public.
 export const ecosystem: { name: string; href?: string; logo?: string; logoWidth?: number; logoHeight?: number }[] = [
   { name: "YB University", href: "/", logo: "/yb-university-logo-horizontal-white.png", logoWidth: 160, logoHeight: 38 },
-  { name: "Peanut Island Boat Club" },
-  { name: "Palm Beach Yachts" },
+  { name: "Palm Beach Yachts", href: "https://palmbeachyachts.com", logo: "/palm-beach-yachts-logo-white.png", logoWidth: 160, logoHeight: 28 },
+  { name: "Florida Yacht Sales", href: "https://floridayachtsales.com", logo: "/florida-yacht-sales-logo-white.png", logoWidth: 160, logoHeight: 28 },
+  { name: "Peanut Island Yacht Club", href: "https://peanutislandboatclub.com", logo: "/peanut-island-yacht-club-logo-white.png", logoWidth: 160, logoHeight: 28 },
+  { name: "Gene Yacht Wizard", href: "https://geneyachtwizard.com", logo: "/gene-yacht-wizard-logo-white.png", logoWidth: 160, logoHeight: 28 },
 ];
 
 export const footerColumns = [
