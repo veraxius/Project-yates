@@ -26,7 +26,7 @@ export const ENROLL_HREF = COURSE_URL;
 export const socialLinks: { id: "instagram" | "facebook" | "x" | "linkedin" | "youtube" | "tiktok"; label: string; href: string }[] = [
   { id: "instagram", label: "Instagram", href: "https://www.instagram.com/yachtbrokeruniversity/" },
   { id: "facebook", label: "Facebook", href: "https://www.facebook.com/yachtbrokeruniversity/" },
-  { id: "x", label: "X", href: "https://x.com/PBYachtSales" },
+  { id: "x", label: "X", href: "https://x.com/yachtuniversity" },
   { id: "linkedin", label: "LinkedIn", href: "https://linkedin.com/company/yacht-broker-university" },
   { id: "youtube", label: "YouTube", href: "https://www.youtube.com/@mYBUniversity" },
   { id: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@yachtbrokeruniversity" },
