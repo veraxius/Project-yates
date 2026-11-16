@@ -13,7 +13,7 @@ import { useEffect, useId, useRef, useState } from "react";
 type Message = { id: number; role: "bot" | "user"; text: string };
 
 const WELCOME =
-  "Hi! I'm the YB University assistant. Ask me about the program, how it works, or what to expect.";
+  "Ahoy! I'm AHOYA, your YB University guide. Big questions. Bold ambitions. Let's get you started. What's on your mind?";
 const SUGGESTIONS = ["What will I learn?", "How long does it take?", "Do I need yacht experience?"];
 const MAX_MESSAGES = 60;
 const SESSION_KEY = "yb-chat-session";
