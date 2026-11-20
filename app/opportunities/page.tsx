@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 import { Cta } from "../../components/Cta";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Reveal";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/opportunities"),
+export const metadata: Metadata = pageMetadata({
+  path: "/opportunities",
   title: "YB Opportunities",
   description:
     "Connecting qualified and selected participants with projects, mentorship, and professional development pathways within the Palm Beach Yachts ecosystem.",
-};
+});
 
 const skills = [
   { name: "YACHT CONTENT CREATION", body: "Create approved yacht photography, video, and digital content." },

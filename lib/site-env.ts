@@ -44,3 +44,63 @@ export function canonicalFor(path: string): { canonical: string } | undefined {
   if (!base) return undefined;
   return { canonical: path === "/" ? `${base}/` : `${base}${path}` };
 }
+
+export const SITE_NAME = "YB University";
+export const DEFAULT_TITLE = "YB University | Discover a World. Make It Yours.";
+export const DEFAULT_DESCRIPTION =
+  "YB University is the education and professional development platform connected to Palm Beach Yachts: professional learning, real-world experiences, industry connections, and selected opportunities.";
+
+// The hero image already used on the home page, reused as the one social-share
+// (Open Graph / Twitter Card) image across the whole site. Its own pixel size is
+// declared below so platforms that read width/height don't guess and distort it.
+const SHARE_IMAGE = {
+  url: "/joyful-couple-sunset-marina.png",
+  width: 1792,
+  height: 878,
+  alt: "A couple smiling together at sunset on a marina dock",
+};
+
+/**
+ * Builds one page's full `metadata` export: canonical link, title, description,
+ * and the matching Open Graph / Twitter Card tags (so a link shared in iMessage,
+ * WhatsApp, Slack, LinkedIn, etc. shows the right title, text, and image instead
+ * of a blank preview). Every page should build its metadata through this
+ * function instead of writing `openGraph`/`twitter` by hand, so the two can
+ * never drift apart.
+ *
+ * `title`/`description` are optional: omit them on the home page to fall back
+ * to the site-wide default (set once in app/layout.tsx).
+ */
+export function pageMetadata({
+  path,
+  title,
+  description,
+}: {
+  path: string;
+  title?: string;
+  description?: string;
+}) {
+  const resolvedTitle = title ?? DEFAULT_TITLE;
+  const resolvedDescription = description ?? DEFAULT_DESCRIPTION;
+  const canonical = canonicalFor(path);
+  return {
+    alternates: canonical,
+    ...(title ? { title } : {}),
+    description: resolvedDescription,
+    openGraph: {
+      title: resolvedTitle,
+      description: resolvedDescription,
+      url: canonical?.canonical,
+      siteName: SITE_NAME,
+      locale: "en_US",
+      type: "website" as const,
+      images: [SHARE_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: resolvedTitle,
+      description: resolvedDescription,
+      images: [SHARE_IMAGE.url],
+    },
+  };
+}

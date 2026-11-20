@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 import Link from "next/link";
 import { Reveal } from "../../components/Reveal";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/contact"),
+export const metadata: Metadata = pageMetadata({
+  path: "/contact",
   title: "Contact",
   description: "Get in touch with YB University.",
-};
+});
 
 // TODO(contact): set CONTACT_EMAIL in the environment (before building) with
 // the address the client wants to receive messages on. No address is invented.

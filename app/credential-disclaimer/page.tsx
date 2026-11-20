@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 import { LegalPage } from "../../components/LegalPage";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/credential-disclaimer"),
+export const metadata: Metadata = pageMetadata({
+  path: "/credential-disclaimer",
   title: "Educational Credential Disclaimer",
   description:
     "The YB University credential is an educational credential. It is not a government-issued or professional license.",
-};
+});
 
 export default function CredentialDisclaimerPage() {
   return (

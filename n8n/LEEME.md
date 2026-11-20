@@ -60,9 +60,11 @@ Los archivos `.json` se importan en n8n (menú ⋯ → *Import from file*). Este
 > **Usa los nombres `YB_*`, no los de WholeBranding.** En tu n8n ya existen `QDRANT_URL` y `QDRANT_COLLECTION` para los flujos de WholeBranding: si el chatbot de YB los usara, leería (y el flujo 5 borraría) el conocimiento de WholeBranding.
 
 ### 3. Campos en Zoho (módulo Leads)
-Crea estos 15 campos de tipo *Single Line* y comprueba que el **nombre de API** coincide (Zoho cambia los espacios por guion bajo):
+Crea estos 10 campos de tipo *Single Line* y comprueba que el **nombre de API** coincide (Zoho cambia los espacios por guion bajo):
 
-`YB Segment`, `YB Event`, `Landing Page`, `Primary Interest`, `Secondary Interests`, `UTM Source`, `UTM Medium`, `UTM Campaign`, `UTM Content`, `Referral Code`, `Consent Status`, `Last Submission Id`, `Last Submitted At`, **`YB Lifecycle`** y **`Lifecycle Updated At`**.
+`YB Segment`, `YB Event`, `Landing Page`, `Interests`, `UTM Source`, `UTM Details`, `Referral Code`, `Consent Status`, **`YB Lifecycle`** y **`Lifecycle Updated At`**.
+
+`Interests` junta Primary Interest + Secondary Interests (`"interés primario | secundario1, secundario2"`). `UTM Details` junta UTM Medium + UTM Campaign + UTM Content (`"medium=x; campaign=y; content=z"`). El id y la fecha de cada envío (antes `Last Submission Id` / `Last Submitted At`) ya no son campos propios: van como una línea más dentro de `Description`.
 
 En `YB Lifecycle` pon como **valor predeterminado "Lead"**. Las etapas son: Lead → Enrolled → Completed. Si tu Zoho no es de EE. UU., cambia `zohoapis.com` por `zohoapis.eu`, `.in` o `.com.au` en los nodos de Zoho.
 
@@ -136,6 +138,7 @@ El correo depende del **tipo de formulario**, no del segmento: quien se registra
 - *Cómo se porta:* cada pregunta se responde **por separado**: el chat no recuerda las anteriores. Así las respuestas dependen solo del contenido aprobado y el gasto es predecible, pero "¿y cuánto cuesta eso?" sin decir qué, no se entiende.
 - *Límites en la web:* 30 mensajes por dirección y 300 en total cada 10 minutos, 500 caracteres por mensaje. Además el flujo 3 tiene su tope diario.
 - *Tope de escalado (flujo 2):* el `sessionId` lo genera el navegador y no está autenticado, así que alguien podría guionizar llamadas con un `sessionId` nuevo cada vez para saltarse el límite de "un aviso por conversación cada 6 horas". El nodo *Preparar aviso* pone un tope aparte, de 50 Leads creados en Zoho por este camino al día: superado el tope, se sigue avisando al equipo por correo (hasta su propio tope de 100), pero no se escribe nada más en Zoho.
+- *Tope del flujo 6 (LearnWorlds):* ese webhook no verifica firma ni cabecera secreta, solo que la URL (con un código largo) no se comparta. Si esa URL se filtrara, el nodo *Preparar actualización* limita a 300 escrituras en Zoho por día por esta vía — sin este tope, una URL filtrada permitiría crear o modificar Leads sin límite.
 
 **Dos advertencias del modelo:** si cambias `YB_CHAT_MODEL` a uno que "razona", sube `max_completion_tokens` en el nodo *Armar petición*. Y las embeddings son `text-embedding-3-large` (3072 dimensiones): la colección debe crearse con ese tamaño, y el flujo 5 trae el nodo que lo hace.
 

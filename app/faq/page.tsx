@@ -4,14 +4,26 @@ import { Cta } from "../../components/Cta";
 import { PublicFaq } from "../../components/faq/PublicFaq";
 import { Photo } from "../../components/Photo";
 import { Reveal } from "../../components/Reveal";
-import { FAQ_LINKS } from "../../lib/faq";
-import { canonicalFor } from "../../lib/site-env";
+import { FAQS, FAQ_LINKS } from "../../lib/faq";
+import { pageMetadata } from "../../lib/site-env";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/faq"),
+export const metadata: Metadata = pageMetadata({
+  path: "/faq",
   title: "Questions & Answers",
   description:
     "Clear answers about yacht brokerage education, careers, costs, certificates, and YB University experiences.",
+});
+
+// Rich-result markup for Google: each question/answer pair, straight from the
+// same lib/faq.json used to render the page, so the two can never drift apart.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
+  })),
 };
 
 const next = [
@@ -41,6 +53,11 @@ const next = [
 export default function FaqPage() {
   return (
     <>
+      {/* Fixed, build-time JSON from lib/faq.json, not visitor input. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <section className="relative isolate overflow-hidden bg-ivory">
         {/* The photo has the man on the left and open sky on the right, so on a
             wide screen the text sits over the sky; on a phone it sits below. */}

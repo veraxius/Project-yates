@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 import { Cta } from "../../components/Cta";
 import { PageHero } from "../../components/PageHero";
 import { Photo } from "../../components/Photo";
 import { Reveal } from "../../components/Reveal";
 import { ENROLL_HREF } from "../../lib/site";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/network"),
+export const metadata: Metadata = pageMetadata({
+  path: "/network",
   title: "YB Network",
   description:
     "A focused community of students, emerging professionals, experienced industry members, and mentors.",
-};
+});
 
 const rooms = [
   { name: "THE DOCK", body: "Meet the community. Introduce yourself. Discover who is building what." },

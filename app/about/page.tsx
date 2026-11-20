@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 import { PageHero } from "../../components/PageHero";
 import { Reveal } from "../../components/Reveal";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/about"),
+export const metadata: Metadata = pageMetadata({
+  path: "/about",
   title: "About YB University",
   description:
     "A new perspective on an established industry. YB University is connected to Palm Beach Yachts and built to introduce a new generation to the business of yachting.",
-};
+});
 
 const approach = [
   {
@@ -60,7 +60,7 @@ export default function AboutPage() {
       <section className="bg-ivory py-24 lg:py-32">
         <div className="container-x">
           <Reveal>
-            <p className="eyebrow">OUR APPROACH</p>
+            <h2 className="eyebrow">OUR APPROACH</h2>
           </Reveal>
           <div className="mt-10 grid gap-10 md:grid-cols-3">
             {approach.map((a, i) => (

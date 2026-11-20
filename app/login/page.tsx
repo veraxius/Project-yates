@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 import { Reveal } from "../../components/Reveal";
 import { ENROLL_HREF, LOGIN_HREF } from "../../lib/site";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/login"),
+export const metadata: Metadata = pageMetadata({
+  path: "/login",
   title: "Log In",
   description: "Sign in to your YB University course.",
-};
+});
 
 // Members sign in on LearnWorlds, which owns the accounts, passwords and
 // sessions. This site does not store passwords or sessions of its own.

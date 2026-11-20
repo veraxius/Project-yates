@@ -3,14 +3,14 @@ import { LandingShell } from "../../components/landing/LandingShell";
 import { LeadForm } from "../../components/landing/LeadForm";
 import { Photo } from "../../components/Photo";
 import { leadForms } from "../../lib/lead-forms";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/discovery-pass"),
+export const metadata: Metadata = pageMetadata({
+  path: "/discovery-pass",
   title: "The YB Discovery Pass",
   description:
     "Your world starts here. Discover introductory learning, explore upcoming experiences, and find the YB path that fits your interests.",
-};
+});
 
 // The shared free registration, for people who arrive without a campaign page.
 // The answer to "What interests you most?" decides how the CRM classifies them.

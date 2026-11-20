@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 import { Reveal } from "../../components/Reveal";
 import { resourceGroups } from "../../lib/resources";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/resources"),
+export const metadata: Metadata = pageMetadata({
+  path: "/resources",
   title: "Resources",
   description: "Forms, templates and documents that yacht brokers can use.",
-};
+});
 
 export default function ResourcesPage() {
   const groups = resourceGroups.filter((g) => g.items.length > 0);

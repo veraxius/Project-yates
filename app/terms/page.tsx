@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { canonicalFor } from "../../lib/site-env";
+import { pageMetadata } from "../../lib/site-env";
 import { LegalPage } from "../../components/LegalPage";
 
-export const metadata: Metadata = {
-  alternates: canonicalFor("/terms"),
+export const metadata: Metadata = pageMetadata({
+  path: "/terms",
   title: "Terms & Conditions",
   description: "The terms that apply to using YB University and enrolling in its programs.",
-};
+});
 
 export default function TermsPage() {
   return (
