@@ -24,15 +24,20 @@ const isDev = process.env.NODE_ENV === "development";
 // If you later add a third-party service, extend the matching directive:
 //   Stripe.js / embedded checkout -> script-src, frame-src, connect-src https://js.stripe.com / https://api.stripe.com
 //   LearnWorlds embed / n8n chat   -> frame-src / script-src for that host
-//   Analytics (GA, Plausible...)   -> script-src and connect-src for that host
+//
+// Google Tag Manager (GTM-PHVRS29F, loaded in app/layout.tsx) needed:
+//   script-src  https://www.googletagmanager.com
+//   img-src     https://www.googletagmanager.com https://www.google-analytics.com (GTM's noscript pixel)
+//   connect-src https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com
+//   frame-src   https://www.googletagmanager.com (GTM's noscript iframe fallback)
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`, // eval only for dev tooling
+  `script-src 'self' 'unsafe-inline' https://www.googletagmanager.com${isDev ? " 'unsafe-eval'" : ""}`, // eval only for dev tooling
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com",
   "font-src 'self' data:",
-  `connect-src 'self'${isDev ? " ws: wss:" : ""}`, // ws only for hot reload in dev
-  "frame-src 'none'",
+  `connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com${isDev ? " ws: wss:" : ""}`, // ws only for hot reload in dev
+  "frame-src https://www.googletagmanager.com", // noscript fallback iframe (GTM)
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
