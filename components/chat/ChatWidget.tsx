@@ -118,6 +118,16 @@ export function ChatWidget({ ready }: { ready: boolean }) {
   return (
     <div className="print:hidden">
       {open && (
+        <div
+          aria-hidden
+          onClick={() => {
+            setOpen(false);
+            launcher.current?.focus();
+          }}
+          className="fixed inset-0 z-30 bg-navy-950/20 sm:bg-transparent"
+        />
+      )}
+      {open && (
         <section
           id={panelId}
           role="dialog"
